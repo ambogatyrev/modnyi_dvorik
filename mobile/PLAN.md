@@ -661,7 +661,7 @@ AppBar: Category name + back button
 ### [ ] Phase 7: Product Detail Screen Implementation
 **Branch**: `phase_product_detail`
 
-#### [ ] Subtask 7.1: Create Product Detail Cubit
+#### [✅] Subtask 7.1: Create Product Detail Cubit
 **Files**:
 - `lib/features/product/presentation/cubit/product_detail_cubit.dart`
 - `lib/features/product/presentation/cubit/product_detail_state.dart`
@@ -691,7 +691,7 @@ class ProductDetailState {
 
 ---
 
-#### [ ] Subtask 7.2: Create Quantity Selector Widget
+#### [✅] Subtask 7.2: Create Quantity Selector Widget
 **Files**:
 - `lib/features/product/presentation/widgets/quantity_selector.dart`
 
