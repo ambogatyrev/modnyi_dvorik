@@ -851,7 +851,7 @@ AppBar: "Ваша корзина"
 ### [ ] Phase 9: Profile Screen Implementation
 **Branch**: `phase_profile_screen`
 
-#### [ ] Subtask 9.1: Create Profile Cubit
+#### [✅] Subtask 9.1: Create Profile Cubit
 **Files**:
 - `lib/features/profile/presentation/cubit/profile_cubit.dart`
 - `lib/features/profile/presentation/cubit/profile_state.dart`
