@@ -5,20 +5,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/category/presentation/screens/category_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
-
-// Placeholder screens (will be replaced with actual implementations)
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Профиль')),
-      body: const Center(child: Text('Profile Screen')),
-    );
-  }
-}
+import '../../features/profile/presentation/screens/profile_screen.dart';
 
 /// Route names constants
 class AppRoutes {
