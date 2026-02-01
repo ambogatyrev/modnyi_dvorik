@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/app_bottom_navigation.dart';
 
 // Placeholder screens (will be replaced with actual implementations)
 class HomeScreen extends StatelessWidget {
@@ -82,19 +83,46 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.category,
-        name: 'category',
-        builder: (context, state) {
-          final categoryId = state.pathParameters['id'] ?? 'all';
-          return CategoryScreen(categoryId: categoryId);
+      // Shell route for screens with bottom navigation
+      ShellRoute(
+        builder: (context, state, child) {
+          return AppBottomNavigation(child: child);
         },
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: const HomeScreen(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.category,
+            name: 'category',
+            pageBuilder: (context, state) {
+              final categoryId = state.pathParameters['id'] ?? 'all';
+              return NoTransitionPage(
+                child: CategoryScreen(categoryId: categoryId),
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoutes.cart,
+            name: 'cart',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: const CartScreen(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.profile,
+            name: 'profile',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: const ProfileScreen(),
+            ),
+          ),
+        ],
       ),
+      // Product detail route without bottom navigation
       GoRoute(
         path: AppRoutes.product,
         name: 'product',
@@ -102,16 +130,6 @@ class AppRouter {
           final productId = state.pathParameters['id'] ?? '';
           return ProductDetailScreen(productId: productId);
         },
-      ),
-      GoRoute(
-        path: AppRoutes.cart,
-        name: 'cart',
-        builder: (context, state) => const CartScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.profile,
-        name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
