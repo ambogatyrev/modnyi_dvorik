@@ -873,7 +873,7 @@ class ProfileState {
 
 ---
 
-#### [ ] Subtask 9.2: Create Loyalty Card Widget
+#### [✅] Subtask 9.2: Create Loyalty Card Widget
 **Files**:
 - `lib/features/profile/presentation/widgets/loyalty_card.dart`
 
