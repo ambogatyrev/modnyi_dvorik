@@ -848,10 +848,10 @@ AppBar: "Ваша корзина"
 
 ---
 
-### [ ] Phase 9: Profile Screen Implementation
+### [✅] Phase 9: Profile Screen Implementation
 **Branch**: `phase_profile_screen`
 
-#### [ ] Subtask 9.1: Create Profile Cubit
+#### [✅] Subtask 9.1: Create Profile Cubit
 **Files**:
 - `lib/features/profile/presentation/cubit/profile_cubit.dart`
 - `lib/features/profile/presentation/cubit/profile_state.dart`
@@ -873,7 +873,7 @@ class ProfileState {
 
 ---
 
-#### [ ] Subtask 9.2: Create Loyalty Card Widget
+#### [✅] Subtask 9.2: Create Loyalty Card Widget
 **Files**:
 - `lib/features/profile/presentation/widgets/loyalty_card.dart`
 
@@ -901,7 +901,7 @@ class ProfileState {
 
 ---
 
-#### [ ] Subtask 9.3: Create Profile Menu Items
+#### [✅] Subtask 9.3: Create Profile Menu Items
 **Files**:
 - `lib/features/profile/presentation/widgets/profile_menu_item.dart`
 
@@ -920,7 +920,7 @@ class ProfileState {
 
 ---
 
-#### [ ] Subtask 9.4: Build Profile Screen
+#### [✅] Subtask 9.4: Build Profile Screen
 **Files**:
 - `lib/features/profile/presentation/screens/profile_screen.dart`
 
