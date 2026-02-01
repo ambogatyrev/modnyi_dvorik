@@ -2,21 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/category/presentation/screens/category_screen.dart';
 
 // Placeholder screens (will be replaced with actual implementations)
-
-class CategoryScreen extends StatelessWidget {
-  final String categoryId;
-  const CategoryScreen({super.key, required this.categoryId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Category: $categoryId')),
-      body: Center(child: Text('Category Screen: $categoryId')),
-    );
-  }
-}
 
 class ProductDetailScreen extends StatelessWidget {
   final String productId;
