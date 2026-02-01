@@ -948,7 +948,7 @@ AppBar: "Профиль"
 
 ---
 
-### [ ] Phase 10: Polish & Refinements
+### [✅] Phase 10: Polish & Refinements
 **Branch**: `phase_polish`
 
 #### [✅] Subtask 10.1: Create Shared Widgets
@@ -1020,7 +1020,7 @@ AppBar: "Профиль"
 
 ---
 
-#### [ ] Subtask 10.5: Responsive Design Improvements
+#### [✅] Subtask 10.5: Responsive Design Improvements
 **Updates**: Screen and widget files
 
 **Improvements**:
