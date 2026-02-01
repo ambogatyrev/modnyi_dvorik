@@ -745,7 +745,7 @@ AppBar: Back button
 ### [ ] Phase 8: Shopping Cart Implementation
 **Branch**: `phase_shopping_cart`
 
-#### [ ] Subtask 8.1: Create Cart BLoC
+#### [✅] Subtask 8.1: Create Cart BLoC
 **Files**:
 - `lib/features/cart/presentation/bloc/cart_bloc.dart`
 - `lib/features/cart/presentation/bloc/cart_event.dart`
