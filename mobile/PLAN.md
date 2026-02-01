@@ -967,7 +967,7 @@ AppBar: "Профиль"
 
 ---
 
-#### [ ] Subtask 10.2: Add Animations
+#### [✅] Subtask 10.2: Add Animations
 **Files**: Update existing screens
 
 **Animations to add**:
