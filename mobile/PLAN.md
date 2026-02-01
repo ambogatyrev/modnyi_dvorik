@@ -951,7 +951,7 @@ AppBar: "Профиль"
 ### [ ] Phase 10: Polish & Refinements
 **Branch**: `phase_polish`
 
-#### [ ] Subtask 10.1: Create Shared Widgets
+#### [✅] Subtask 10.1: Create Shared Widgets
 **Files**:
 - `lib/core/widgets/custom_button.dart`
 - `lib/core/widgets/loading_indicator.dart`
