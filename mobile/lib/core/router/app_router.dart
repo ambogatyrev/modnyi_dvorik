@@ -4,20 +4,9 @@ import '../widgets/app_bottom_navigation.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/category/presentation/screens/category_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
+import '../../features/cart/presentation/screens/cart_screen.dart';
 
 // Placeholder screens (will be replaced with actual implementations)
-
-class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ваша корзина')),
-      body: const Center(child: Text('Cart Screen')),
-    );
-  }
-}
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
