@@ -984,7 +984,7 @@ AppBar: "Профиль"
 
 ---
 
-#### [ ] Subtask 10.3: Implement Price Formatter Utility
+#### [✅] Subtask 10.3: Implement Price Formatter Utility
 **Files**:
 - `lib/core/utils/price_formatter.dart`
 
