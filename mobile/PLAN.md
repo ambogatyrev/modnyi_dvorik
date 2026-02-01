@@ -742,7 +742,7 @@ AppBar: Back button
 
 ---
 
-### [ ] Phase 8: Shopping Cart Implementation
+### [✅] Phase 8: Shopping Cart Implementation
 **Branch**: `phase_shopping_cart`
 
 #### [✅] Subtask 8.1: Create Cart BLoC
@@ -798,7 +798,7 @@ class CartState {
 
 ---
 
-#### [ ] Subtask 8.3: Create Order Summary Widget
+#### [✅] Subtask 8.3: Create Order Summary Widget
 **Files**:
 - `lib/features/cart/presentation/widgets/order_summary.dart`
 
@@ -818,7 +818,7 @@ class CartState {
 
 ---
 
-#### [ ] Subtask 8.4: Build Cart Screen
+#### [✅] Subtask 8.4: Build Cart Screen
 **Files**:
 - `lib/features/cart/presentation/screens/cart_screen.dart`
 
