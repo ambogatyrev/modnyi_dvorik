@@ -777,7 +777,7 @@ class CartState {
 
 ---
 
-#### [ ] Subtask 8.2: Create Cart Item Widget
+#### [✅] Subtask 8.2: Create Cart Item Widget
 **Files**:
 - `lib/features/cart/presentation/widgets/cart_item_widget.dart`
 
