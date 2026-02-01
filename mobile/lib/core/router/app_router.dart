@@ -3,21 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/category/presentation/screens/category_screen.dart';
+import '../../features/product/presentation/screens/product_detail_screen.dart';
 
 // Placeholder screens (will be replaced with actual implementations)
-
-class ProductDetailScreen extends StatelessWidget {
-  final String productId;
-  const ProductDetailScreen({super.key, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Product Detail')),
-      body: Center(child: Text('Product Detail Screen: $productId')),
-    );
-  }
-}
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
