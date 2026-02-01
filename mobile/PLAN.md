@@ -4,6 +4,7 @@
 ## WORKFLOW INSTRUCTIONS FOR CLAUDE
 
 **Git Workflow:**
+0. Dont use git merge or git rebase commands!!!
 1. For each phase, create a new git branch: `git checkout -b phase_{phase_name}`
 2. For each subtask completed, create a commit with descriptive message
 3. After completing a subtask, mark it as `[✅]` in this file
