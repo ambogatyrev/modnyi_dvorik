@@ -1001,7 +1001,7 @@ AppBar: "Профиль"
 
 ---
 
-#### [ ] Subtask 10.4: Handle Edge Cases
+#### [✅] Subtask 10.4: Handle Edge Cases
 **Updates**: Various screen files
 
 **Edge cases**:
