@@ -12,11 +12,7 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onAddToCart;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-    this.onAddToCart,
-  });
+  const ProductCard({super.key, required this.product, this.onAddToCart});
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +41,7 @@ class ProductCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     color: AppColors.muted,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: const Center(child: CircularProgressIndicator()),
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: AppColors.muted,
@@ -71,8 +65,8 @@ class ProductCard extends StatelessWidget {
                   Text(
                     product.name,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                      fontWeight: FontWeight.w500,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -85,10 +79,8 @@ class ProductCard extends StatelessWidget {
                       // Price
                       Text(
                         priceFormatter.format(product.price),
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
 
                       // Add to Cart Button

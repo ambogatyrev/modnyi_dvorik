@@ -35,12 +35,8 @@ class AppTheme {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: AppTextStyles.h3.copyWith(
-          color: AppColors.textPrimary,
-        ),
-        iconTheme: IconThemeData(
-          color: AppColors.textPrimary,
-        ),
+        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
 
       // Text theme
@@ -116,7 +112,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.error),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         hintStyle: AppTextStyles.bodyMedium.copyWith(
           color: AppColors.textSecondary,
         ),
@@ -152,10 +151,7 @@ class AppTheme {
       ),
 
       // Icon theme
-      iconTheme: IconThemeData(
-        color: AppColors.textPrimary,
-        size: 24,
-      ),
+      iconTheme: IconThemeData(color: AppColors.textPrimary, size: 24),
 
       // Chip theme
       chipTheme: ChipThemeData(
@@ -163,9 +159,7 @@ class AppTheme {
         selectedColor: AppColors.primary,
         labelStyle: AppTextStyles.labelMedium,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
 
       // Font family
