@@ -16,23 +16,11 @@ class _BannerCarouselState extends State<BannerCarousel> {
   int _currentPage = 0;
   Timer? _timer;
 
-  // Banner data (colors for now, can be replaced with images later)
-  final List<Map<String, dynamic>> _banners = [
-    {
-      'title': 'Новая коллекция',
-      'subtitle': 'Уход за лицом',
-      'color': Color(0xFFFFE5F1),
-    },
-    {
-      'title': 'Скидка 20%',
-      'subtitle': 'На всю косметику',
-      'color': Color(0xFFE5F3FF),
-    },
-    {
-      'title': 'Бесплатная доставка',
-      'subtitle': 'При заказе от 2000₽',
-      'color': Color(0xFFFFF5E5),
-    },
+  // Banner data with images
+  final List<String> _banners = [
+    'assets/images/image7.png',
+    'assets/images/image8.png',
+    'assets/images/image9.png',
   ];
 
   @override
@@ -82,12 +70,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
             },
             itemCount: _banners.length,
             itemBuilder: (context, index) {
-              final banner = _banners[index];
-              return _buildBannerItem(
-                title: banner['title'],
-                subtitle: banner['subtitle'],
-                color: banner['color'],
-              );
+              return _buildBannerItem(_banners[index]);
             },
           ),
         ),
@@ -97,46 +80,32 @@ class _BannerCarouselState extends State<BannerCarousel> {
         // Dots Indicator
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            _banners.length,
-            (index) => _buildDot(index),
-          ),
+          children: List.generate(_banners.length, (index) => _buildDot(index)),
         ),
       ],
     );
   }
 
-  Widget _buildBannerItem({
-    required String title,
-    required String subtitle,
-    required Color color,
-  }) {
+  Widget _buildBannerItem(String imagePath) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.darkBlue,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-          ),
-        ],
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.hardEdge,
+      child: Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: AppColors.border,
+            child: Center(
+              child: Icon(
+                Icons.image_not_supported,
+                color: AppColors.textSecondary,
+                size: 48,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
