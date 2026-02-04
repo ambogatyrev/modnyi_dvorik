@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 
@@ -50,22 +51,21 @@ class _SearchAppBarState extends State<SearchAppBar>
     );
 
     // Cancel button slide animation (from right)
-    _cancelButtonSlideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
-    ));
+    _cancelButtonSlideAnimation =
+        Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     // Cancel button fade animation
-    _cancelButtonFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
-    ));
+    _cancelButtonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+      ),
+    );
 
     // Start animation after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -123,7 +123,7 @@ class _SearchAppBarState extends State<SearchAppBar>
                   height: 40,
                   decoration: BoxDecoration(
                     color: AppColors.muted,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextField(
                     controller: widget.controller,
@@ -135,10 +135,17 @@ class _SearchAppBarState extends State<SearchAppBar>
                         color: AppColors.mutedForeground,
                         fontSize: 16,
                       ),
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: AppColors.mutedForeground,
-                        size: 20,
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          'assets/icons/search.svg',
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.mutedForeground,
+                            BlendMode.srcIn,
+                          ),
+                          width: 20,
+                          height: 20,
+                        ),
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
@@ -165,8 +172,6 @@ class _SearchAppBarState extends State<SearchAppBar>
               ),
             ),
 
-            const SizedBox(width: 8),
-
             // Cancel button with slide and fade animation
             SlideTransition(
               position: _cancelButtonSlideAnimation,
@@ -181,7 +186,7 @@ class _SearchAppBarState extends State<SearchAppBar>
                   child: Text(
                     'Отменить',
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.secondary,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
                     ),
