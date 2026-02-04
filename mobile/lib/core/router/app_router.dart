@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/app_bottom_navigation.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/category/presentation/screens/category_screen.dart';
+import '../../features/category/presentation/screens/category_products_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -11,6 +12,7 @@ import '../../features/search/presentation/screens/search_screen.dart';
 /// Route names constants
 class AppRoutes {
   static const String home = '/';
+  static const String categories = '/categories';
   static const String category = '/category/:id';
   static const String product = '/product/:id';
   static const String cart = '/cart';
@@ -41,12 +43,19 @@ class AppRouter {
             ),
           ),
           GoRoute(
+            path: AppRoutes.categories,
+            name: 'categories',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: const CategoryScreen(),
+            ),
+          ),
+          GoRoute(
             path: AppRoutes.category,
             name: 'category',
             pageBuilder: (context, state) {
               final categoryId = state.pathParameters['id'] ?? 'all';
               return NoTransitionPage(
-                child: CategoryScreen(categoryId: categoryId),
+                child: CategoryProductsScreen(categoryId: categoryId),
               );
             },
           ),

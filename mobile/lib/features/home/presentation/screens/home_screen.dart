@@ -115,17 +115,10 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                 ),
 
                 // Category Selector
-                SliverToBoxAdapter(
+                const SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: CategorySelector(
-                      selectedCategoryId: state.selectedCategory,
-                      onCategorySelected: (categoryId) {
-                        context.read<HomeBloc>().add(
-                          SelectCategory(categoryId),
-                        );
-                      },
-                    ),
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: CategorySelector(),
                   ),
                 ),
 

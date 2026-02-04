@@ -74,7 +74,7 @@ class AppBottomNavigation extends StatelessWidget {
   int _getSelectedIndex(String location) {
     if (location == AppRoutes.home) {
       return 0;
-    } else if (location.startsWith('/category')) {
+    } else if (location == AppRoutes.categories || location.startsWith('/category')) {
       return 1;
     } else if (location == AppRoutes.cart) {
       return 2;
@@ -90,7 +90,7 @@ class AppBottomNavigation extends StatelessWidget {
         context.go(AppRoutes.home);
         break;
       case 1:
-        context.go(AppRoutes.categoryRoute('all'));
+        context.go(AppRoutes.categories);
         break;
       case 2:
         context.go(AppRoutes.cart);

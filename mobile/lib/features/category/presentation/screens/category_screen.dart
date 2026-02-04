@@ -1,143 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../home/data/repositories/product_repository_impl.dart';
-import '../../../home/domain/usecases/get_products_by_category.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/data/mock_categories.dart';
+import '../../../../core/router/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../home/presentation/widgets/search_app_bar_title.dart';
-import '../../../home/presentation/widgets/product_card.dart';
-import '../bloc/category_bloc.dart';
-import '../bloc/category_event.dart';
-import '../bloc/category_state.dart';
 
-/// Category screen - displays products filtered by category
+/// Category screen - displays all categories in a grid
+/// Users can tap on a category to view products
 class CategoryScreen extends StatelessWidget {
-  final String categoryId;
-
-  const CategoryScreen({super.key, required this.categoryId});
+  const CategoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        // Create repository and use case
-        final repository = ProductRepositoryImpl();
-        final getProductsByCategory = GetProductsByCategory(repository);
+    // Get all categories except "all"
+    final categories = mockCategories.where((cat) => cat.id != 'all').toList();
 
-        // Create and initialize BLoC
-        return CategoryBloc(getProductsByCategory: getProductsByCategory)
-          ..add(LoadCategoryProducts(categoryId));
-      },
-      child: const _CategoryScreenView(),
+    return Scaffold(
+      appBar: AppBar(title: const SearchAppBarTitle(), titleSpacing: 16),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            return _CategoryCard(
+              icon: category.icon,
+              name: category.name,
+              onTap: () => context.push(AppRoutes.categoryRoute(category.id)),
+            );
+          },
+        ),
+      ),
     );
   }
 }
 
-class _CategoryScreenView extends StatelessWidget {
-  const _CategoryScreenView();
+/// Category card widget for grid display
+class _CategoryCard extends StatelessWidget {
+  final String icon;
+  final String name;
+  final VoidCallback onTap;
+
+  const _CategoryCard({
+    required this.icon,
+    required this.name,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const SearchAppBarTitle(showLogo: false),
-        titleSpacing: 16,
-      ),
-      body: BlocBuilder<CategoryBloc, CategoryState>(
-        builder: (context, state) {
-          if (state is CategoryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is CategoryError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
-                      state.message,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Reload products (get categoryId from current state)
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Назад'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (state is CategoryLoaded) {
-            if (state.products.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.shopping_bag_outlined,
-                      size: 64,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.3),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Нет товаров',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      child: Text(
-                        'В этой категории пока нет товаров',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.muted,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(icon, style: const TextStyle(fontSize: 48)),
+              const SizedBox(height: 12),
+              Text(
+                name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
-              );
-            }
-
-            return GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                textAlign: TextAlign.center,
               ),
-              itemCount: state.products.length,
-              itemBuilder: (context, index) {
-                final product = state.products[index];
-                return ProductCard(
-                  product: product,
-                  onAddToCart: () {
-                    // Show snackbar when adding to cart
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${product.name} добавлен в корзину'),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          }
-
-          // Initial state
-          return const SizedBox.shrink();
-        },
+            ],
+          ),
+        ),
       ),
     );
   }

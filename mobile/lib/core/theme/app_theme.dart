@@ -38,7 +38,10 @@ class AppTheme {
         surfaceTintColor: AppColors.background,
         shadowColor: AppColors.textPrimary.withValues(alpha: 0.1),
         centerTitle: false,
-        titleTextStyle: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
+        titleTextStyle: AppTextStyles.h2.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.bold,
+        ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
 
