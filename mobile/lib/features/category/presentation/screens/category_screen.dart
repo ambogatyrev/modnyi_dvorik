@@ -7,8 +7,35 @@ import '../../../home/presentation/widgets/search_app_bar_title.dart';
 
 /// Category screen - displays all categories in a grid
 /// Users can tap on a category to view products
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
+
+  @override
+  State<CategoryScreen> createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +43,14 @@ class CategoryScreen extends StatelessWidget {
     final categories = mockCategories.where((cat) => cat.id != 'all').toList();
 
     return Scaffold(
-      appBar: AppBar(title: const SearchAppBarTitle(), titleSpacing: 16),
+      appBar: AppBar(
+        title: SearchAppBarTitle(scrollOffset: _scrollOffset),
+        titleSpacing: 16,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
+          controller: _scrollController,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 1.2,
