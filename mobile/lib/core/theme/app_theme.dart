@@ -29,13 +29,16 @@ class AppTheme {
       // Scaffold background
       scaffoldBackgroundColor: AppColors.background,
 
-      // App bar theme
+      // App bar theme with blur effect when scrolled
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 8,
+        surfaceTintColor: AppColors.background,
+        shadowColor: AppColors.textPrimary.withValues(alpha: 0.1),
         centerTitle: false,
-        titleTextStyle: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
+        titleTextStyle: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
 
