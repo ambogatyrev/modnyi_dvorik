@@ -8,7 +8,7 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/category_selector.dart';
-import '../widgets/home_app_bar_title.dart';
+import '../widgets/search_app_bar_title.dart';
 import '../widgets/product_card.dart';
 
 /// Home screen - main landing page of the app
@@ -69,15 +69,13 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: HomeAppBarTitle(scrollOffset: _scrollOffset),
+        title: SearchAppBarTitle(scrollOffset: _scrollOffset),
         titleSpacing: 16,
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           if (state is HomeLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is HomeError) {
@@ -85,11 +83,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red,
-                  ),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
                     state.message,
@@ -128,8 +122,8 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                       selectedCategoryId: state.selectedCategory,
                       onCategorySelected: (categoryId) {
                         context.read<HomeBloc>().add(
-                              SelectCategory(categoryId),
-                            );
+                          SelectCategory(categoryId),
+                        );
                       },
                     ),
                   ),
@@ -142,15 +136,13 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                     child: Text(
                       'Популярные товары',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
 
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 16),
-                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
                 // Product Grid
                 state.products.isEmpty
@@ -162,10 +154,9 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                               Icon(
                                 Icons.shopping_bag_outlined,
                                 size: 64,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.3),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.3),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -187,32 +178,32 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                         sliver: SliverGrid(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.75,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final product = state.products[index];
-                              return ProductCard(
-                                product: product,
-                                onAddToCart: () {
-                                  // Show snackbar when adding to cart
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        '${product.name} добавлен в корзину',
-                                      ),
-                                      duration: const Duration(seconds: 2),
-                                      behavior: SnackBarBehavior.floating,
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                              ),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final product = state.products[index];
+                            return ProductCard(
+                              product: product,
+                              onAddToCart: () {
+                                // Show snackbar when adding to cart
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${product.name} добавлен в корзину',
                                     ),
-                                  );
-                                },
-                              );
-                            },
-                            childCount: state.products.length,
-                          ),
+                                    duration: const Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
+                            );
+                          }, childCount: state.products.length),
                         ),
                       ),
               ],

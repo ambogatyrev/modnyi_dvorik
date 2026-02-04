@@ -4,21 +4,23 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 
-/// Animated home AppBar title with logo and search field
-/// Logo fades out and search field expands as user scrolls
-class HomeAppBarTitle extends StatelessWidget {
+/// Generic AppBar title with optional logo and search field
+/// Logo fades out and search field expands as user scrolls (when showLogo is true)
+class SearchAppBarTitle extends StatelessWidget {
   final double scrollOffset;
+  final bool showLogo;
 
-  const HomeAppBarTitle({
+  const SearchAppBarTitle({
     super.key,
-    required this.scrollOffset,
+    this.scrollOffset = 0.0,
+    this.showLogo = true,
   });
 
   @override
   Widget build(BuildContext context) {
     // Calculate animation progress (0.0 to 1.0)
     // Logo starts fading at 50px scroll, completely gone by 100px
-    final fadeProgress = (scrollOffset / 100).clamp(0.0, 1.0);
+    final fadeProgress = showLogo ? (scrollOffset / 100).clamp(0.0, 1.0) : 1.0;
     final logoOpacity = 1.0 - fadeProgress;
 
     // Logo size shrinks as it fades
@@ -26,8 +28,8 @@ class HomeAppBarTitle extends StatelessWidget {
 
     return Row(
       children: [
-        // Animated Logo
-        if (logoOpacity > 0)
+        // Animated Logo (only shown if showLogo is true)
+        if (showLogo && logoOpacity > 0)
           AnimatedOpacity(
             opacity: logoOpacity,
             duration: const Duration(milliseconds: 150),

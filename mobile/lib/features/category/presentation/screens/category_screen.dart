@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../home/data/repositories/product_repository_impl.dart';
 import '../../../home/domain/usecases/get_products_by_category.dart';
+import '../../../home/presentation/widgets/search_app_bar_title.dart';
 import '../../../home/presentation/widgets/product_card.dart';
 import '../bloc/category_bloc.dart';
 import '../bloc/category_event.dart';
@@ -11,10 +12,7 @@ import '../bloc/category_state.dart';
 class CategoryScreen extends StatelessWidget {
   final String categoryId;
 
-  const CategoryScreen({
-    super.key,
-    required this.categoryId,
-  });
+  const CategoryScreen({super.key, required this.categoryId});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +23,8 @@ class CategoryScreen extends StatelessWidget {
         final getProductsByCategory = GetProductsByCategory(repository);
 
         // Create and initialize BLoC
-        return CategoryBloc(
-          getProductsByCategory: getProductsByCategory,
-        )..add(LoadCategoryProducts(categoryId));
+        return CategoryBloc(getProductsByCategory: getProductsByCategory)
+          ..add(LoadCategoryProducts(categoryId));
       },
       child: const _CategoryScreenView(),
     );
@@ -41,21 +38,13 @@ class _CategoryScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<CategoryBloc, CategoryState>(
-          builder: (context, state) {
-            if (state is CategoryLoaded) {
-              return Text(state.categoryName);
-            }
-            return const Text('Категория');
-          },
-        ),
+        title: const SearchAppBarTitle(showLogo: false),
+        titleSpacing: 16,
       ),
       body: BlocBuilder<CategoryBloc, CategoryState>(
         builder: (context, state) {
           if (state is CategoryLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is CategoryError) {
@@ -63,11 +52,7 @@ class _CategoryScreenView extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red,
-                  ),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -99,10 +84,9 @@ class _CategoryScreenView extends StatelessWidget {
                     Icon(
                       Icons.shopping_bag_outlined,
                       size: 64,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.3),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -140,9 +124,7 @@ class _CategoryScreenView extends StatelessWidget {
                     // Show snackbar when adding to cart
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          '${product.name} добавлен в корзину',
-                        ),
+                        content: Text('${product.name} добавлен в корзину'),
                         duration: const Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
