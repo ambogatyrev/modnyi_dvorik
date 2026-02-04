@@ -6,6 +6,7 @@ import '../../features/category/presentation/screens/category_screen.dart';
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/search/presentation/screens/search_screen.dart';
 
 /// Route names constants
 class AppRoutes {
@@ -14,6 +15,7 @@ class AppRoutes {
   static const String product = '/product/:id';
   static const String cart = '/cart';
   static const String profile = '/profile';
+  static const String search = '/search';
 
   // Helper methods to build routes with parameters
   static String categoryRoute(String id) => '/category/$id';
@@ -72,6 +74,14 @@ class AppRouter {
           final productId = state.pathParameters['id'] ?? '';
           return ProductDetailScreen(productId: productId);
         },
+      ),
+      // Search route without bottom navigation
+      GoRoute(
+        path: AppRoutes.search,
+        name: 'search',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: SearchScreen(),
+        ),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
