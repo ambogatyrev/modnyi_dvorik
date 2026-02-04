@@ -50,6 +50,7 @@ dependencies:
   # UI & Styling
   google_fonts: ^6.1.0
   cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.10+1
 
   # Utils
   intl: ^0.19.0
@@ -81,6 +82,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
      - assets/images/
+     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
