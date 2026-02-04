@@ -17,50 +17,40 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen>
     with SingleTickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
   late TabController _tabController;
-  double _scrollOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    setState(() {
-      _scrollOffset = _scrollController.offset;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: SearchAppBarTitle(scrollOffset: _scrollOffset),
+        title: SearchAppBarTitle(),
         titleSpacing: 16,
         bottom: TabBar(
+          dividerColor: const Color.fromARGB(255, 218, 216, 216),
           controller: _tabController,
           labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSecondary,
+          unselectedLabelColor: AppColors.secondary,
           indicatorColor: AppColors.primary,
           indicatorWeight: 3,
           labelStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
           ),
           unselectedLabelStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
           ),
           tabs: const [
             Tab(text: 'Категории'),
@@ -70,10 +60,7 @@ class _CategoryScreenState extends State<CategoryScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          _CategoriesTab(scrollController: _scrollController),
-          _BrandsTab(scrollController: _scrollController),
-        ],
+        children: [_CategoriesTab(), _BrandsTab()],
       ),
     );
   }
@@ -81,9 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen>
 
 /// Categories Tab - displays all categories in a grid
 class _CategoriesTab extends StatelessWidget {
-  final ScrollController scrollController;
-
-  const _CategoriesTab({required this.scrollController});
+  const _CategoriesTab();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +77,6 @@ class _CategoriesTab extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GridView.builder(
-        controller: scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1.2,
@@ -115,9 +99,7 @@ class _CategoriesTab extends StatelessWidget {
 
 /// Brands Tab - displays all brands in a grid
 class _BrandsTab extends StatelessWidget {
-  final ScrollController scrollController;
-
-  const _BrandsTab({required this.scrollController});
+  const _BrandsTab();
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +108,6 @@ class _BrandsTab extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GridView.builder(
-        controller: scrollController,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1.2,
@@ -190,9 +171,9 @@ class _ItemCard extends StatelessWidget {
                 child: Text(
                   name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
