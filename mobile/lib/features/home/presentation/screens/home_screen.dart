@@ -8,6 +8,7 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/banner_carousel.dart';
 import '../widgets/category_selector.dart';
+import '../widgets/home_app_bar_title.dart';
 import '../widgets/product_card.dart';
 
 /// Home screen - main landing page of the app
@@ -34,14 +35,42 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _HomeScreenView extends StatelessWidget {
+class _HomeScreenView extends StatefulWidget {
   const _HomeScreenView();
+
+  @override
+  State<_HomeScreenView> createState() => _HomeScreenViewState();
+}
+
+class _HomeScreenViewState extends State<_HomeScreenView> {
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    setState(() {
+      _scrollOffset = _scrollController.offset;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Модный дворик'),
+        title: HomeAppBarTitle(scrollOffset: _scrollOffset),
+        titleSpacing: 16,
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
@@ -81,6 +110,7 @@ class _HomeScreenView extends StatelessWidget {
 
           if (state is HomeLoaded) {
             return CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 // Banner Carousel
                 const SliverToBoxAdapter(
