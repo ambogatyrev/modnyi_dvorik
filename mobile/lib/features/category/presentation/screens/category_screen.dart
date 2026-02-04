@@ -39,8 +39,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get all categories except "all"
-    final categories = mockCategories.where((cat) => cat.id != 'all').toList();
+    final categories = mockCategories;
 
     return Scaffold(
       appBar: AppBar(
