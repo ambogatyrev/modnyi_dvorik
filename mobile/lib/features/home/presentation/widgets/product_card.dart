@@ -79,26 +79,19 @@ class ProductCard extends StatelessWidget {
                       // Price
                       Text(
                         priceFormatter.format(product.price),
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.secondary,
+                        ),
                       ),
 
                       // Add to Cart Button
                       InkWell(
                         onTap: onAddToCart,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                        child: const Icon(
+                          Icons.favorite_outline,
+                          color: AppColors.primary,
+                          size: 20,
                         ),
                       ),
                     ],
