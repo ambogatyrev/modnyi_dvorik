@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../home/data/repositories/product_repository_impl.dart';
 import '../../../home/domain/usecases/get_product_by_id.dart';
+import '../../../cart/data/repositories/cart_repository_impl.dart';
+import '../../../cart/domain/usecases/add_to_cart.dart';
 import '../cubit/product_detail_cubit.dart';
 import '../cubit/product_detail_state.dart';
 import '../widgets/quantity_selector.dart';
@@ -247,16 +249,41 @@ class _ProductDetailView extends StatelessWidget {
               child: SizedBox(
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement add to cart functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Товар добавлен в корзину (${state.quantity} шт.)',
-                        ),
-                        backgroundColor: AppColors.success,
-                      ),
-                    );
+                  onPressed: () async {
+                    try {
+                      // Create cart repository (MVP - in-memory storage)
+                      final cartRepository = CartRepositoryImpl();
+                      final addToCart = AddToCart(cartRepository);
+
+                      // Add product to cart with selected quantity
+                      await addToCart(product, state.quantity);
+
+                      // Show success message
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Товар добавлен в корзину (${state.quantity} шт.)',
+                            ),
+                            backgroundColor: AppColors.success,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      // Show error message if something goes wrong
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Не удалось добавить товар в корзину: ${e.toString()}',
+                            ),
+                            backgroundColor: AppColors.error,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,

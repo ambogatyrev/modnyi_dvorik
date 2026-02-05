@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../cart/data/repositories/cart_repository_impl.dart';
 import '../../../cart/domain/usecases/add_to_cart.dart' as usecases;
@@ -14,67 +13,30 @@ import '../widgets/cart_item_widget.dart';
 import '../widgets/order_summary.dart';
 
 /// Cart Screen - displays shopping cart with items and checkout option
+/// Uses in-memory storage for MVP stage
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            backgroundColor: AppColors.muted,
-            appBar: AppBar(
-              title: const Text('Ваша корзина'),
-              centerTitle: false,
-            ),
-            body: const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
-            ),
-          );
-        }
+    return BlocProvider(
+      create: (context) {
+        // Create cart repository and use cases (MVP - in-memory storage)
+        final repository = CartRepositoryImpl();
+        final getCartItems = GetCartItems(repository);
+        final addToCart = usecases.AddToCart(repository);
+        final removeFromCart = usecases.RemoveFromCart(repository);
+        final updateCartQuantity = UpdateCartQuantity(repository);
 
-        if (snapshot.hasError || !snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: AppColors.muted,
-            appBar: AppBar(
-              title: const Text('Ваша корзина'),
-              centerTitle: false,
-            ),
-            body: Center(
-              child: Text(
-                'Ошибка при загрузке корзины',
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          );
-        }
-
-        final prefs = snapshot.data!;
-
-        return BlocProvider(
-          create: (context) {
-            // Create repository and use cases
-            final repository = CartRepositoryImpl(prefs);
-            final getCartItems = GetCartItems(repository);
-            final addToCart = usecases.AddToCart(repository);
-            final removeFromCart = usecases.RemoveFromCart(repository);
-            final updateCartQuantity = UpdateCartQuantity(repository);
-
-            // Create and initialize BLoC
-            return CartBloc(
-              getCartItems: getCartItems,
-              addToCart: addToCart,
-              removeFromCart: removeFromCart,
-              updateCartQuantity: updateCartQuantity,
-            )..add(const LoadCart());
-          },
-          child: const _CartScreenView(),
-        );
+        // Create and initialize BLoC
+        return CartBloc(
+          getCartItems: getCartItems,
+          addToCart: addToCart,
+          removeFromCart: removeFromCart,
+          updateCartQuantity: updateCartQuantity,
+        )..add(const LoadCart());
       },
+      child: const _CartScreenView(),
     );
   }
 }
