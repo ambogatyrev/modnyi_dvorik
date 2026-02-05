@@ -41,6 +41,8 @@ class _ProductDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat('#,###', 'ru_RU');
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: BlocBuilder<ProductDetailCubit, ProductDetailState>(
@@ -84,7 +86,6 @@ class _ProductDetailView extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          final formatter = NumberFormat('#,###', 'ru_RU');
           final formattedPrice = formatter.format(product.price);
 
           return CustomScrollView(
@@ -212,42 +213,7 @@ class _ProductDetailView extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-
-                          // Add to Cart Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: 56,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // TODO: Implement add to cart functionality
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Товар добавлен в корзину (${state.quantity} шт.)',
-                                    ),
-                                    backgroundColor: AppColors.success,
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: AppColors.textOnPrimary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation: 0,
-                              ),
-                              child: Text(
-                                'В корзину • ${formatter.format(product.price * state.quantity)} ₽',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 100), // Space for floating button
                         ],
                       ),
                     ),
@@ -255,6 +221,61 @@ class _ProductDetailView extends StatelessWidget {
                 ),
               ),
             ],
+          );
+        },
+      ),
+      bottomNavigationBar: BlocBuilder<ProductDetailCubit, ProductDetailState>(
+        builder: (context, state) {
+          final product = state.product;
+          if (product == null) {
+            return const SizedBox.shrink();
+          }
+
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.background,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.darkBlue.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(16),
+            child: SafeArea(
+              child: SizedBox(
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // TODO: Implement add to cart functionality
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Товар добавлен в корзину (${state.quantity} шт.)',
+                        ),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textOnPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'В корзину • ${formatter.format(product.price * state.quantity)} ₽',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           );
         },
       ),

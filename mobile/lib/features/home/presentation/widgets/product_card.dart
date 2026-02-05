@@ -85,7 +85,7 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
 
-                      // Add to Cart Button
+                      // Add to Favorite Button
                       InkWell(
                         onTap: onAddToCart,
                         child: const Icon(
