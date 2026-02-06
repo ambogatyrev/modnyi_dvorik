@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../home/data/repositories/product_repository_impl.dart';
 import '../../../home/domain/usecases/get_product_by_id.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -242,26 +244,12 @@ class _ProductDetailView extends StatelessWidget {
                               final currentQuantity = cartQuantity!;
                               return Row(
                                 children: [
-                                  // Add to cart button (left)
+                                  // "In Cart" button (left) - navigates to cart
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        // Add 1 more item to cart
-                                        context.read<CartBloc>().add(
-                                              UpdateQuantity(
-                                                productId: product.id,
-                                                quantity: currentQuantity + 1,
-                                              ),
-                                            );
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                            content: Text('Количество увеличено'),
-                                            backgroundColor: AppColors.success,
-                                            duration: Duration(seconds: 1),
-                                          ),
-                                        );
+                                        // Navigate to cart screen
+                                        context.go(AppRoutes.cart);
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primary,
@@ -271,9 +259,9 @@ class _ProductDetailView extends StatelessWidget {
                                         ),
                                         elevation: 0,
                                       ),
-                                      child: Text(
-                                        'В корзину • ${formatter.format(product.price)} ₽',
-                                        style: const TextStyle(
+                                      child: const Text(
+                                        'В корзине',
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
