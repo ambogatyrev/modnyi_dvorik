@@ -221,6 +221,7 @@ class _ProductDetailView extends StatelessWidget {
               }
 
               final isInCart = cartQuantity != null;
+              final currentQty = cartQuantity ?? 0;
 
               return Container(
                 decoration: BoxDecoration(
@@ -237,105 +238,109 @@ class _ProductDetailView extends StatelessWidget {
                 child: SafeArea(
                   child: SizedBox(
                     height: 56,
-                    child: isInCart
-                        ? Builder(
-                            builder: (context) {
-                              // Capture non-null cartQuantity for use in closures
-                              final currentQuantity = cartQuantity!;
-                              return Row(
-                                children: [
-                                  // "In Cart" button (left) - navigates to cart
-                                  Expanded(
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        // Navigate to cart screen
-                                        context.go(AppRoutes.cart);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.primary,
-                                        foregroundColor: AppColors.textOnPrimary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        elevation: 0,
-                                      ),
-                                      child: const Text(
-                                        'В корзине',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: double.infinity,
+                            child: TweenAnimationBuilder<Color?>(
+                              tween: ColorTween(
+                                end: isInCart
+                                    ? AppColors.secondary
+                                    : AppColors.primary,
+                              ),
+                              duration: const Duration(milliseconds: 300),
+                              builder: (context, color, child) {
+                                return ElevatedButton(
+                                  onPressed: isInCart
+                                      ? () => context.go(AppRoutes.cart)
+                                      : () {
+                                          context.read<CartBloc>().add(
+                                            AddToCart(
+                                              product: product,
+                                              quantity: 1,
+                                            ),
+                                          );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Товар добавлен в корзину',
+                                              ),
+                                              backgroundColor:
+                                                  AppColors.success,
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: color,
+                                    foregroundColor: AppColors.textOnPrimary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(
+                                      milliseconds: 200,
+                                    ),
+                                    child: Text(
+                                      isInCart
+                                          ? 'В корзине • ${formatter.format(product.price * currentQty)} ₽'
+                                          : 'В корзину • ${formatter.format(product.price)} ₽',
+                                      key: ValueKey(isInCart),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  // Quantity selector (right) - controls cart quantity
-                                  QuantitySelector(
-                                    quantity: currentQuantity,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        // Quantity selector with animated appearance
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          alignment: Alignment.centerRight,
+                          child: isInCart
+                              ? Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: QuantitySelector(
+                                    quantity: currentQty,
                                     minQuantity: 0,
                                     onIncrement: () {
                                       context.read<CartBloc>().add(
-                                            UpdateQuantity(
-                                              productId: product.id,
-                                              quantity: currentQuantity + 1,
-                                            ),
-                                          );
+                                        UpdateQuantity(
+                                          productId: product.id,
+                                          quantity: currentQty + 1,
+                                        ),
+                                      );
                                     },
                                     onDecrement: () {
-                                      if (currentQuantity == 1) {
-                                        // Remove product from cart when quantity is 1
+                                      if (currentQty == 1) {
                                         context.read<CartBloc>().add(
-                                              RemoveFromCart(product.id),
-                                            );
+                                          RemoveFromCart(product.id),
+                                        );
                                       } else {
-                                        // Decrease quantity
                                         context.read<CartBloc>().add(
-                                              UpdateQuantity(
-                                                productId: product.id,
-                                                quantity: currentQuantity - 1,
-                                              ),
-                                            );
+                                          UpdateQuantity(
+                                            productId: product.id,
+                                            quantity: currentQty - 1,
+                                          ),
+                                        );
                                       }
                                     },
                                   ),
-                                ],
-                              );
-                            },
-                          )
-                        : ElevatedButton(
-                            onPressed: () {
-                              // Add product to cart with quantity 1
-                              context.read<CartBloc>().add(
-                                    AddToCart(
-                                      product: product,
-                                      quantity: 1,
-                                    ),
-                                  );
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Товар добавлен в корзину'),
-                                  backgroundColor: AppColors.success,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.textOnPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'В корзину • ${formatter.format(product.price)} ₽',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

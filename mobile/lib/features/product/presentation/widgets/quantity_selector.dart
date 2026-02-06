@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/theme/app_colors.dart';
 
 /// Quantity selector widget for product detail screen
@@ -20,10 +21,7 @@ class QuantitySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: AppColors.border,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.border, width: 1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -31,7 +29,7 @@ class QuantitySelector extends StatelessWidget {
         children: [
           // Decrement button
           _QuantityButton(
-            icon: Icons.remove,
+            svgAsset: 'assets/icons/minus.svg',
             onPressed: quantity > minQuantity ? onDecrement : null,
           ),
 
@@ -41,16 +39,16 @@ class QuantitySelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               quantity.toString(),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
           ),
 
           // Increment button
           _QuantityButton(
-            icon: Icons.add,
+            svgAsset: 'assets/icons/plus.svg',
             onPressed: onIncrement,
           ),
         ],
@@ -60,16 +58,17 @@ class QuantitySelector extends StatelessWidget {
 }
 
 class _QuantityButton extends StatelessWidget {
-  final IconData icon;
+  final String svgAsset;
   final VoidCallback? onPressed;
 
-  const _QuantityButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _QuantityButton({required this.svgAsset, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
+    final color = onPressed != null
+        ? AppColors.primary
+        : AppColors.mutedForeground;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -79,12 +78,11 @@ class _QuantityButton extends StatelessWidget {
           width: 40,
           height: 40,
           alignment: Alignment.center,
-          child: Icon(
-            icon,
-            size: 20,
-            color: onPressed != null
-                ? AppColors.primary
-                : AppColors.mutedForeground,
+          child: SvgPicture.asset(
+            svgAsset,
+            width: 25,
+            height: 25,
+            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           ),
         ),
       ),
