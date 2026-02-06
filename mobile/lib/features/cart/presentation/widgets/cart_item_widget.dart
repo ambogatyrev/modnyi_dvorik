@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/cart_item.dart';
@@ -31,10 +32,7 @@ class CartItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.border,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +78,8 @@ class CartItemWidget extends StatelessWidget {
                     Expanded(
                       child: Text(
                         product.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppColors.darkBlue,
                             ),
@@ -110,8 +109,8 @@ class CartItemWidget extends StatelessWidget {
                 Text(
                   '${formatter.format(product.price)} ₽',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 12),
 
@@ -122,10 +121,7 @@ class CartItemWidget extends StatelessWidget {
                     // Quantity Controls
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.border,
-                          width: 1,
-                        ),
+                        border: Border.all(color: AppColors.border, width: 1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -133,7 +129,7 @@ class CartItemWidget extends StatelessWidget {
                         children: [
                           // Decrement button
                           _QuantityButton(
-                            icon: Icons.remove,
+                            svgAsset: 'assets/icons/minus.svg',
                             onPressed: onDecrement,
                           ),
 
@@ -143,19 +139,15 @@ class CartItemWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               cartItem.quantity.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                               textAlign: TextAlign.center,
                             ),
                           ),
 
                           // Increment button
                           _QuantityButton(
-                            icon: Icons.add,
+                            svgAsset: 'assets/icons/plus.svg',
                             onPressed: onIncrement,
                           ),
                         ],
@@ -166,9 +158,9 @@ class CartItemWidget extends StatelessWidget {
                     Text(
                       '${formatter.format(cartItem.totalPrice)} ₽',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ],
                 ),
@@ -183,16 +175,17 @@ class CartItemWidget extends StatelessWidget {
 
 /// Internal widget for quantity control buttons
 class _QuantityButton extends StatelessWidget {
-  final IconData icon;
+  final String svgAsset;
   final VoidCallback? onPressed;
 
-  const _QuantityButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _QuantityButton({required this.svgAsset, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
+    final color = onPressed != null
+        ? AppColors.primary
+        : AppColors.mutedForeground;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -202,12 +195,11 @@ class _QuantityButton extends StatelessWidget {
           width: 32,
           height: 32,
           alignment: Alignment.center,
-          child: Icon(
-            icon,
-            size: 16,
-            color: onPressed != null
-                ? AppColors.primary
-                : AppColors.mutedForeground,
+          child: SvgPicture.asset(
+            svgAsset,
+            width: 20,
+            height: 20,
+            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
           ),
         ),
       ),
