@@ -37,8 +37,38 @@ class ProductDetailScreen extends StatelessWidget {
   }
 }
 
-class _ProductDetailView extends StatelessWidget {
+class _ProductDetailView extends StatefulWidget {
   const _ProductDetailView();
+
+  @override
+  State<_ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<_ProductDetailView> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showBottomShadow = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final atBottom = _scrollController.position.extentAfter < 1;
+    if (atBottom != !_showBottomShadow) {
+      setState(() {
+        _showBottomShadow = !atBottom;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +118,7 @@ class _ProductDetailView extends StatelessWidget {
           final formattedPrice = formatter.format(product.price);
 
           return CustomScrollView(
+            controller: _scrollController,
             slivers: [
               // App Bar with back button
               SliverAppBar(
@@ -185,7 +216,7 @@ class _ProductDetailView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(
-                            height: 100,
+                            height: 50,
                           ), // Space for floating button
                         ],
                       ),
@@ -223,16 +254,20 @@ class _ProductDetailView extends StatelessWidget {
               final isInCart = cartQuantity != null;
               final currentQty = cartQuantity ?? 0;
 
-              return Container(
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   color: AppColors.background,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.darkBlue.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, -2),
-                    ),
-                  ],
+                  boxShadow: _showBottomShadow
+                      ? [
+                          BoxShadow(
+                            color:
+                                AppColors.darkBlue.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, -2),
+                          ),
+                        ]
+                      : [],
                 ),
                 padding: const EdgeInsets.all(16),
                 child: SafeArea(
