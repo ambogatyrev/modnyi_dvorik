@@ -134,7 +134,7 @@ class CartItemWidget extends StatelessWidget {
                           // Decrement button
                           _QuantityButton(
                             icon: Icons.remove,
-                            onPressed: cartItem.quantity > 1 ? onDecrement : null,
+                            onPressed: onDecrement,
                           ),
 
                           // Quantity display

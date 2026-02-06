@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../cart/data/repositories/cart_repository_impl.dart';
-import '../../../cart/domain/usecases/add_to_cart.dart' as usecases;
-import '../../../cart/domain/usecases/get_cart_items.dart';
-import '../../../cart/domain/usecases/remove_from_cart.dart' as usecases;
-import '../../../cart/domain/usecases/update_cart_quantity.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
 import '../bloc/cart_state.dart';
@@ -19,25 +14,9 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        // Create cart repository and use cases (MVP - in-memory storage)
-        final repository = CartRepositoryImpl();
-        final getCartItems = GetCartItems(repository);
-        final addToCart = usecases.AddToCart(repository);
-        final removeFromCart = usecases.RemoveFromCart(repository);
-        final updateCartQuantity = UpdateCartQuantity(repository);
-
-        // Create and initialize BLoC
-        return CartBloc(
-          getCartItems: getCartItems,
-          addToCart: addToCart,
-          removeFromCart: removeFromCart,
-          updateCartQuantity: updateCartQuantity,
-        )..add(const LoadCart());
-      },
-      child: const _CartScreenView(),
-    );
+    // Reload cart when screen is opened
+    context.read<CartBloc>().add(const LoadCart());
+    return const _CartScreenView();
   }
 }
 
@@ -161,12 +140,20 @@ class _CartScreenView extends StatelessWidget {
                       );
                 },
                 onDecrement: () {
-                  context.read<CartBloc>().add(
-                        UpdateQuantity(
-                          productId: cartItem.product.id,
-                          quantity: cartItem.quantity - 1,
-                        ),
-                      );
+                  if (cartItem.quantity == 1) {
+                    // Remove product from cart when quantity is 1
+                    context.read<CartBloc>().add(
+                          RemoveFromCart(cartItem.product.id),
+                        );
+                  } else {
+                    // Decrease quantity
+                    context.read<CartBloc>().add(
+                          UpdateQuantity(
+                            productId: cartItem.product.id,
+                            quantity: cartItem.quantity - 1,
+                          ),
+                        );
+                  }
                 },
               );
             },

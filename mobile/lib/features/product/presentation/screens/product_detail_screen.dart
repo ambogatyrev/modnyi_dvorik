@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../home/data/repositories/product_repository_impl.dart';
 import '../../../home/domain/usecases/get_product_by_id.dart';
-import '../../../cart/data/repositories/cart_repository_impl.dart';
-import '../../../cart/domain/usecases/add_to_cart.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../../cart/presentation/bloc/cart_state.dart';
 import '../cubit/product_detail_cubit.dart';
 import '../cubit/product_detail_state.dart';
 import '../widgets/quantity_selector.dart';
@@ -15,10 +16,7 @@ import '../widgets/quantity_selector.dart';
 class ProductDetailScreen extends StatelessWidget {
   final String productId;
 
-  const ProductDetailScreen({
-    super.key,
-    required this.productId,
-  });
+  const ProductDetailScreen({super.key, required this.productId});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +27,8 @@ class ProductDetailScreen extends StatelessWidget {
         final getProductById = GetProductById(repository);
 
         // Create and initialize Cubit
-        return ProductDetailCubit(
-          getProductById: getProductById,
-        )..loadProduct(productId);
+        return ProductDetailCubit(getProductById: getProductById)
+          ..loadProduct(productId);
       },
       child: const _ProductDetailView(),
     );
@@ -51,9 +48,7 @@ class _ProductDetailView extends StatelessWidget {
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
+              child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
 
@@ -144,9 +139,7 @@ class _ProductDetailView extends StatelessWidget {
                           // Product Name
                           Text(
                             product.name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
+                            style: Theme.of(context).textTheme.headlineMedium
                                 ?.copyWith(
                                   color: AppColors.darkBlue,
                                   fontWeight: FontWeight.w700,
@@ -157,9 +150,7 @@ class _ProductDetailView extends StatelessWidget {
                           // Price
                           Text(
                             '$formattedPrice ₽',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
+                            style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w700,
@@ -187,35 +178,13 @@ class _ProductDetailView extends StatelessWidget {
                           _buildSection(
                             context,
                             title: 'Характеристики',
-                            content: _getProductSpecifications(product.category),
+                            content: _getProductSpecifications(
+                              product.category,
+                            ),
                           ),
-                          const SizedBox(height: 32),
-
-                          // Quantity Selector
-                          Row(
-                            children: [
-                              Text(
-                                'Количество:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                              const SizedBox(width: 16),
-                              QuantitySelector(
-                                quantity: state.quantity,
-                                onIncrement: () => context
-                                    .read<ProductDetailCubit>()
-                                    .incrementQuantity(),
-                                onDecrement: () => context
-                                    .read<ProductDetailCubit>()
-                                    .decrementQuantity(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 100), // Space for floating button
+                          const SizedBox(
+                            height: 100,
+                          ), // Space for floating button
                         ],
                       ),
                     ),
@@ -227,82 +196,162 @@ class _ProductDetailView extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BlocBuilder<ProductDetailCubit, ProductDetailState>(
-        builder: (context, state) {
-          final product = state.product;
+        builder: (context, productState) {
+          final product = productState.product;
           if (product == null) {
             return const SizedBox.shrink();
           }
 
-          return Container(
-            decoration: BoxDecoration(
-              color: AppColors.background,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.darkBlue.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(16),
-            child: SafeArea(
-              child: SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      // Create cart repository (MVP - in-memory storage)
-                      final cartRepository = CartRepositoryImpl();
-                      final addToCart = AddToCart(cartRepository);
+          return BlocBuilder<CartBloc, CartState>(
+            builder: (context, cartState) {
+              // Check if product is in cart
+              int? cartQuantity;
+              if (cartState is CartLoaded) {
+                try {
+                  final cartItem = cartState.items.firstWhere(
+                    (item) => item.product.id == product.id,
+                  );
+                  cartQuantity = cartItem.quantity;
+                } catch (e) {
+                  // Product not in cart
+                  cartQuantity = null;
+                }
+              }
 
-                      // Add product to cart with selected quantity
-                      await addToCart(product, state.quantity);
+              final isInCart = cartQuantity != null;
 
-                      // Show success message
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Товар добавлен в корзину (${state.quantity} шт.)',
-                            ),
-                            backgroundColor: AppColors.success,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    } catch (e) {
-                      // Show error message if something goes wrong
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Не удалось добавить товар в корзину: ${e.toString()}',
-                            ),
-                            backgroundColor: AppColors.error,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.textOnPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              return Container(
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.darkBlue.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
                     ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'В корзину • ${formatter.format(product.price * state.quantity)} ₽',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(16),
+                child: SafeArea(
+                  child: SizedBox(
+                    height: 56,
+                    child: isInCart
+                        ? Builder(
+                            builder: (context) {
+                              // Capture non-null cartQuantity for use in closures
+                              final currentQuantity = cartQuantity!;
+                              return Row(
+                                children: [
+                                  // Add to cart button (left)
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // Add 1 more item to cart
+                                        context.read<CartBloc>().add(
+                                              UpdateQuantity(
+                                                productId: product.id,
+                                                quantity: currentQuantity + 1,
+                                              ),
+                                            );
+
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Количество увеличено'),
+                                            backgroundColor: AppColors.success,
+                                            duration: Duration(seconds: 1),
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        foregroundColor: AppColors.textOnPrimary,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      child: Text(
+                                        'В корзину • ${formatter.format(product.price)} ₽',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Quantity selector (right) - controls cart quantity
+                                  QuantitySelector(
+                                    quantity: currentQuantity,
+                                    minQuantity: 0,
+                                    onIncrement: () {
+                                      context.read<CartBloc>().add(
+                                            UpdateQuantity(
+                                              productId: product.id,
+                                              quantity: currentQuantity + 1,
+                                            ),
+                                          );
+                                    },
+                                    onDecrement: () {
+                                      if (currentQuantity == 1) {
+                                        // Remove product from cart when quantity is 1
+                                        context.read<CartBloc>().add(
+                                              RemoveFromCart(product.id),
+                                            );
+                                      } else {
+                                        // Decrease quantity
+                                        context.read<CartBloc>().add(
+                                              UpdateQuantity(
+                                                productId: product.id,
+                                                quantity: currentQuantity - 1,
+                                              ),
+                                            );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : ElevatedButton(
+                            onPressed: () {
+                              // Add product to cart with quantity 1
+                              context.read<CartBloc>().add(
+                                    AddToCart(
+                                      product: product,
+                                      quantity: 1,
+                                    ),
+                                  );
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Товар добавлен в корзину'),
+                                  backgroundColor: AppColors.success,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: AppColors.textOnPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'В корзину • ${formatter.format(product.price)} ₽',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -320,17 +369,17 @@ class _ProductDetailView extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.darkBlue,
-              ),
+            fontWeight: FontWeight.w600,
+            color: AppColors.darkBlue,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           content,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppColors.textSecondary,
-                height: 1.5,
-              ),
+            color: AppColors.textSecondary,
+            height: 1.5,
+          ),
         ),
       ],
     );
