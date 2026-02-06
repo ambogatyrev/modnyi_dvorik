@@ -261,18 +261,6 @@ class _ProductDetailView extends StatelessWidget {
                                               quantity: 1,
                                             ),
                                           );
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Товар добавлен в корзину',
-                                              ),
-                                              backgroundColor:
-                                                  AppColors.success,
-                                              duration: Duration(seconds: 2),
-                                            ),
-                                          );
                                         },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: color,
@@ -283,9 +271,7 @@ class _ProductDetailView extends StatelessWidget {
                                     elevation: 0,
                                   ),
                                   child: AnimatedSwitcher(
-                                    duration: const Duration(
-                                      milliseconds: 200,
-                                    ),
+                                    duration: const Duration(milliseconds: 200),
                                     child: Text(
                                       isInCart
                                           ? 'В корзине • ${formatter.format(product.price * currentQty)} ₽'
@@ -310,31 +296,34 @@ class _ProductDetailView extends StatelessWidget {
                           child: isInCart
                               ? Padding(
                                   padding: const EdgeInsets.only(left: 12),
-                                  child: QuantitySelector(
-                                    quantity: currentQty,
-                                    minQuantity: 0,
-                                    onIncrement: () {
-                                      context.read<CartBloc>().add(
-                                        UpdateQuantity(
-                                          productId: product.id,
-                                          quantity: currentQty + 1,
-                                        ),
-                                      );
-                                    },
-                                    onDecrement: () {
-                                      if (currentQty == 1) {
-                                        context.read<CartBloc>().add(
-                                          RemoveFromCart(product.id),
-                                        );
-                                      } else {
+                                  child: SizedBox(
+                                    height: 56,
+                                    child: QuantitySelector(
+                                      quantity: currentQty,
+                                      minQuantity: 0,
+                                      onIncrement: () {
                                         context.read<CartBloc>().add(
                                           UpdateQuantity(
                                             productId: product.id,
-                                            quantity: currentQty - 1,
+                                            quantity: currentQty + 1,
                                           ),
                                         );
-                                      }
-                                    },
+                                      },
+                                      onDecrement: () {
+                                        if (currentQty == 1) {
+                                          context.read<CartBloc>().add(
+                                            RemoveFromCart(product.id),
+                                          );
+                                        } else {
+                                          context.read<CartBloc>().add(
+                                            UpdateQuantity(
+                                              productId: product.id,
+                                              quantity: currentQty - 1,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
                                 )
                               : const SizedBox.shrink(),
