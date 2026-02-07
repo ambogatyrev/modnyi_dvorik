@@ -184,7 +184,7 @@ class _SearchAppBarState extends State<SearchAppBar>
                     minimumSize: const Size(0, 40),
                   ),
                   child: Text(
-                    'Отменить',
+                    'Отмена',
                     style: TextStyle(
                       color: AppColors.secondary,
                       fontSize: 16,

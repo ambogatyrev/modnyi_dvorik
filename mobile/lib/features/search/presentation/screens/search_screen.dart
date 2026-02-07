@@ -94,10 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return Center(
         child: Text(
           'Введите запрос для поиска',
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.mutedForeground,
-          ),
+          style: TextStyle(fontSize: 16, color: AppColors.mutedForeground),
         ),
       );
     }
@@ -105,27 +102,14 @@ class _SearchScreenState extends State<SearchScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            'Популярные товары',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        Expanded(
-          child: SearchResultsGrid(products: state.popularProducts),
-        ),
+        Expanded(child: SearchResultsGrid(products: state.popularProducts)),
       ],
     );
   }
 
   /// Build loading state
   Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   /// Build loaded state with search results
@@ -137,14 +121,12 @@ class _SearchScreenState extends State<SearchScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
             'Найдено: ${state.products.length}',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColors.mutedForeground,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: AppColors.mutedForeground),
           ),
         ),
-        Expanded(
-          child: SearchResultsGrid(products: state.products),
-        ),
+        Expanded(child: SearchResultsGrid(products: state.products)),
       ],
     );
   }
@@ -155,25 +137,18 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: AppColors.mutedForeground,
-          ),
+          Icon(Icons.search_off, size: 64, color: AppColors.mutedForeground),
           const SizedBox(height: 16),
           Text(
             'Ничего не найдено',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
             'Попробуйте изменить запрос',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppColors.mutedForeground,
-            ),
+            style: TextStyle(fontSize: 16, color: AppColors.mutedForeground),
           ),
         ],
       ),
@@ -186,27 +161,20 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: AppColors.error,
-          ),
+          Icon(Icons.error_outline, size: 64, color: AppColors.error),
           const SizedBox(height: 16),
           Text(
             'Ошибка',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               state.message,
-              style: TextStyle(
-                fontSize: 16,
-                color: AppColors.mutedForeground,
-              ),
+              style: TextStyle(fontSize: 16, color: AppColors.mutedForeground),
               textAlign: TextAlign.center,
             ),
           ),
