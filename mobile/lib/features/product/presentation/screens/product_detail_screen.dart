@@ -126,10 +126,11 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                 pinned: true,
                 backgroundColor: AppColors.background,
                 elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: AppColors.darkBlue),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+                actionsPadding: EdgeInsets.symmetric(horizontal: 16),
+                actions: [
+                  // Add to Favorite Button
+                  const Icon(Icons.favorite_outline, color: AppColors.primary),
+                ],
               ),
 
               // Product content

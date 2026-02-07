@@ -168,6 +168,11 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
 
+      // Override back button icon to always use arrow_back (Android-style)
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (context) => const Icon(Icons.arrow_back),
+      ),
+
       // Font family
       fontFamily: GoogleFonts.manrope().fontFamily,
     );
