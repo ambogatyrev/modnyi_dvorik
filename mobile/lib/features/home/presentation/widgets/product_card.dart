@@ -26,7 +26,10 @@ class ProductCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          context.push(AppRoutes.productRoute(product.id));
+          context.push(
+            AppRoutes.productRoute(product.id),
+            extra: product.image,
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

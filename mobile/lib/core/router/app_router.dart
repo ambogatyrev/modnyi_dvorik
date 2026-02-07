@@ -79,9 +79,15 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.product,
         name: 'product',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final productId = state.pathParameters['id'] ?? '';
-          return ProductDetailScreen(productId: productId);
+          final imageUrl = state.extra as String?;
+          return MaterialPage(
+            child: ProductDetailScreen(
+              productId: productId,
+              imageUrl: imageUrl,
+            ),
+          );
         },
       ),
       // Search route without bottom navigation

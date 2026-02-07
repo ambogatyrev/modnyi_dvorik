@@ -19,8 +19,13 @@ import '../widgets/specification_list.dart';
 /// Product Detail Screen - shows full product information
 class ProductDetailScreen extends StatelessWidget {
   final String productId;
+  final String? imageUrl;
 
-  const ProductDetailScreen({super.key, required this.productId});
+  const ProductDetailScreen({
+    super.key,
+    required this.productId,
+    this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +39,16 @@ class ProductDetailScreen extends StatelessWidget {
         return ProductDetailCubit(getProductById: getProductById)
           ..loadProduct(productId);
       },
-      child: const _ProductDetailView(),
+      child: _ProductDetailView(productId: productId, imageUrl: imageUrl),
     );
   }
 }
 
 class _ProductDetailView extends StatefulWidget {
-  const _ProductDetailView();
+  final String productId;
+  final String? imageUrl;
+
+  const _ProductDetailView({required this.productId, this.imageUrl});
 
   @override
   State<_ProductDetailView> createState() => _ProductDetailViewState();
@@ -79,44 +87,9 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
     return Scaffold(
       body: BlocBuilder<ProductDetailCubit, ProductDetailState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
-
-          if (state.error != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    state.error!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Назад'),
-                  ),
-                ],
-              ),
-            );
-          }
-
           final product = state.product;
-          if (product == null) {
-            return const SizedBox.shrink();
-          }
-
-          final formattedPrice = formatter.format(product.price);
+          final imageUrl = product?.image ?? widget.imageUrl;
+          final productId = product?.id ?? widget.productId;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -133,96 +106,131 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                 ],
               ),
 
-              // Product content
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Hero Image
-                    Hero(
-                      tag: 'product-${product.id}',
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: CachedNetworkImage(
-                          imageUrl: product.image,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: AppColors.muted,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
-                              ),
+              // Hero Image — always rendered for Hero animation
+              if (imageUrl != null)
+                SliverToBoxAdapter(
+                  child: Hero(
+                    tag: 'product-$productId',
+                    child: AspectRatio(
+                      aspectRatio: 1.0,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: AppColors.muted,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primary,
                             ),
                           ),
-                          errorWidget: (context, url, error) => Container(
-                            color: AppColors.muted,
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 64,
-                              color: AppColors.mutedForeground,
-                            ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: AppColors.muted,
+                          child: const Icon(
+                            Icons.image_not_supported,
+                            size: 64,
+                            color: AppColors.mutedForeground,
                           ),
                         ),
                       ),
                     ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Product Name
-                          Text(
-                            product.name,
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(
-                                  color: AppColors.darkBlue,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          // Price
-                          Text(
-                            '$formattedPrice ₽',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontSize: 24,
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 24),
-
-                          // Description Section
-                          _buildSection(
-                            context,
-                            title: 'Описание',
-                            content: _getProductDescription(product.name),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Features Section
-                          FeatureList(
-                            title: 'Особенности',
-                            features: _getProductFeatures(product.category),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Specifications Section
-                          SpecificationList(
-                            title: 'Характеристики',
-                            specs: _getProductSpecifications(product.category),
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ), // Space for floating button
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+
+              // Product details content
+              if (state.isLoading)
+                const SliverFillRemaining(
+                  child: Center(
+                    child:
+                        CircularProgressIndicator(color: AppColors.primary),
+                  ),
+                )
+              else if (state.error != null)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: AppColors.error,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          state.error!,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Назад'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else if (product != null) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Product Name
+                        Text(
+                          product.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium
+                              ?.copyWith(
+                                color: AppColors.darkBlue,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Price
+                        Text(
+                          '${formatter.format(product.price)} ₽',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                fontSize: 24,
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Description Section
+                        _buildSection(
+                          context,
+                          title: 'Описание',
+                          content: _getProductDescription(product.name),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Features Section
+                        FeatureList(
+                          title: 'Особенности',
+                          features: _getProductFeatures(product.category),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Specifications Section
+                        SpecificationList(
+                          title: 'Характеристики',
+                          specs: _getProductSpecifications(product.category),
+                        ),
+                        const SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ],
           );
         },
