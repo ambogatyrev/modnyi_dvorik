@@ -38,16 +38,14 @@ class AppRouter {
           GoRoute(
             path: AppRoutes.home,
             name: 'home',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const HomeScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: const HomeScreen()),
           ),
           GoRoute(
             path: AppRoutes.categories,
             name: 'categories',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const CategoryScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: const CategoryScreen()),
           ),
           GoRoute(
             path: AppRoutes.category,
@@ -62,16 +60,14 @@ class AppRouter {
           GoRoute(
             path: AppRoutes.cart,
             name: 'cart',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const CartScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: const CartScreen()),
           ),
           GoRoute(
             path: AppRoutes.profile,
             name: 'profile',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: const ProfileScreen(),
-            ),
+            pageBuilder: (context, state) =>
+                NoTransitionPage(child: const ProfileScreen()),
           ),
         ],
       ),
@@ -94,9 +90,8 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.search,
         name: 'search',
-        pageBuilder: (context, state) => const NoTransitionPage(
-          child: SearchScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: SearchScreen()),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

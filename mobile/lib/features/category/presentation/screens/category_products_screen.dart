@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../home/data/repositories/product_repository_impl.dart';
 import '../../../home/domain/usecases/get_products_by_category.dart';
 import '../../../home/presentation/widgets/product_card.dart';
 import '../../../home/presentation/widgets/search_app_bar_title.dart';
-import '../../../../core/router/app_router.dart';
 import '../bloc/category_bloc.dart';
 import '../bloc/category_event.dart';
 import '../bloc/category_state.dart';
@@ -85,9 +83,8 @@ class _CategoryProductsScreenView extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                     child: Text(
                       state.categoryName,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -102,10 +99,9 @@ class _CategoryProductsScreenView extends StatelessWidget {
                           Icon(
                             Icons.shopping_bag_outlined,
                             size: 64,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.3),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -129,31 +125,31 @@ class _CategoryProductsScreenView extends StatelessWidget {
                   SliverPadding(
                     padding: const EdgeInsets.all(16),
                     sliver: SliverGrid(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final product = state.products[index];
-                          return ProductCard(
-                            product: product,
-                            onAddToCart: () {
-                              // Show snackbar when adding to cart
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${product.name} добавлен в корзину'),
-                                  duration: const Duration(seconds: 2),
-                                  behavior: SnackBarBehavior.floating,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                          ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final product = state.products[index];
+                        return ProductCard(
+                          product: product,
+                          onAddToCart: () {
+                            // Show snackbar when adding to cart
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '${product.name} добавлен в корзину',
                                 ),
-                              );
-                            },
-                          );
-                        },
-                        childCount: state.products.length,
-                      ),
+                                duration: const Duration(seconds: 2),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          },
+                        );
+                      }, childCount: state.products.length),
                     ),
                   ),
               ],
