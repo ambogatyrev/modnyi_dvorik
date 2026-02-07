@@ -12,7 +12,9 @@ import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
 import '../cubit/product_detail_cubit.dart';
 import '../cubit/product_detail_state.dart';
+import '../widgets/feature_list.dart';
 import '../widgets/quantity_selector.dart';
+import '../widgets/specification_list.dart';
 
 /// Product Detail Screen - shows full product information
 class ProductDetailScreen extends StatelessWidget {
@@ -75,7 +77,6 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
     final formatter = NumberFormat('#,###', 'ru_RU');
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: BlocBuilder<ProductDetailCubit, ProductDetailState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -201,20 +202,16 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                           const SizedBox(height: 20),
 
                           // Features Section
-                          _buildSection(
-                            context,
+                          FeatureList(
                             title: 'Особенности',
-                            content: _getProductFeatures(product.category),
+                            features: _getProductFeatures(product.category),
                           ),
                           const SizedBox(height: 20),
 
                           // Specifications Section
-                          _buildSection(
-                            context,
+                          SpecificationList(
                             title: 'Характеристики',
-                            content: _getProductSpecifications(
-                              product.category,
-                            ),
+                            specs: _getProductSpecifications(product.category),
                           ),
                           const SizedBox(
                             height: 50,
@@ -422,28 +419,61 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
         'Качественный косметический продукт для ухода и красоты. Подходит для ежедневного использования.';
   }
 
-  String _getProductFeatures(String category) {
+  List<String> _getProductFeatures(String category) {
     final features = {
-      'face':
-          '• Подходит для всех типов кожи\n• Гипоаллергенная формула\n• Без парабенов и сульфатов\n• Протестировано дерматологами',
-      'makeup':
-          '• Стойкая формула\n• Насыщенный цвет\n• Не тестируется на животных\n• Подходит для чувствительной кожи',
-      'hair':
-          '• Натуральные компоненты\n• Подходит для частого использования\n• Восстанавливает структуру волос\n• Приятный аромат',
+      'face': [
+        'Подходит для всех типов кожи',
+        'Гипоаллергенная формула',
+        'Без парабенов и сульфатов',
+        'Протестировано дерматологами',
+      ],
+      'makeup': [
+        'Стойкая формула',
+        'Насыщенный цвет',
+        'Не тестируется на животных',
+        'Подходит для чувствительной кожи',
+      ],
+      'hair': [
+        'Натуральные компоненты',
+        'Подходит для частого использования',
+        'Восстанавливает структуру волос',
+        'Приятный аромат',
+      ],
     };
 
     return features[category] ??
-        '• Высокое качество\n• Безопасный состав\n• Проверено специалистами\n• Рекомендовано профессионалами';
+        [
+          'Высокое качество',
+          'Безопасный состав',
+          'Проверено специалистами',
+          'Рекомендовано профессионалами',
+        ];
   }
 
-  String _getProductSpecifications(String category) {
+  List<Specification> _getProductSpecifications(String category) {
     final specs = {
-      'face': '• Объем: 50 мл\n• Срок годности: 12 месяцев\n• Страна: Корея',
-      'makeup': '• Объем: 3.5 г\n• Срок годности: 24 месяца\n• Страна: Италия',
-      'hair': '• Объем: 250 мл\n• Срок годности: 36 месяцев\n• Страна: Франция',
+      'face': [
+        const Specification(label: 'Объем', value: '50 мл'),
+        const Specification(label: 'Срок годности', value: '12 месяцев'),
+        const Specification(label: 'Страна', value: 'Корея'),
+      ],
+      'makeup': [
+        const Specification(label: 'Объем', value: '3.5 г'),
+        const Specification(label: 'Срок годности', value: '24 месяца'),
+        const Specification(label: 'Страна', value: 'Италия'),
+      ],
+      'hair': [
+        const Specification(label: 'Объем', value: '250 мл'),
+        const Specification(label: 'Срок годности', value: '36 месяцев'),
+        const Specification(label: 'Страна', value: 'Франция'),
+      ],
     };
 
     return specs[category] ??
-        '• Объем: 50 мл\n• Срок годности: 12 месяцев\n• Страна производства: Европа';
+        [
+          const Specification(label: 'Объем', value: '50 мл'),
+          const Specification(label: 'Срок годности', value: '12 месяцев'),
+          const Specification(label: 'Страна', value: 'Европа'),
+        ];
   }
 }

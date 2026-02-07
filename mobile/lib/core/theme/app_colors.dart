@@ -24,7 +24,7 @@ class AppColors {
 
   // Text colors
   static const Color textPrimary = Color(0xFF0A2240);
-  static const Color textSecondary = Color(0xFF717182);
+  static const Color textSecondary = Color(0xFF4a5565);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
   // Semantic colors
