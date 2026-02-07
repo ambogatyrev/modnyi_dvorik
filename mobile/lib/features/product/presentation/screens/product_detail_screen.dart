@@ -183,10 +183,11 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                           // Price
                           Text(
                             '$formattedPrice ₽',
-                            style: Theme.of(context).textTheme.headlineSmall
+                            style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(
+                                  fontSize: 24,
                                   color: AppColors.primary,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.bold,
                                 ),
                           ),
                           const SizedBox(height: 24),
@@ -261,8 +262,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                   boxShadow: _showBottomShadow
                       ? [
                           BoxShadow(
-                            color:
-                                AppColors.darkBlue.withValues(alpha: 0.1),
+                            color: AppColors.darkBlue.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, -2),
                           ),
