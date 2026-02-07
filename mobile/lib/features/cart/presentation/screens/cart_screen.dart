@@ -27,17 +27,12 @@ class _CartScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.muted,
-      appBar: AppBar(
-        title: const Text('Ваша корзина'),
-        centerTitle: false,
-      ),
+      appBar: AppBar(title: const Text('Ваша корзина'), centerTitle: false),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state is CartLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
+              child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
 
@@ -97,17 +92,17 @@ class _CartScreenView extends StatelessWidget {
           Text(
             'Корзина пуста',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.darkBlue,
-                ),
+              fontWeight: FontWeight.w600,
+              color: AppColors.darkBlue,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             'Добавьте товары в корзину,\nчтобы оформить заказ',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -128,31 +123,31 @@ class _CartScreenView extends StatelessWidget {
                 cartItem: cartItem,
                 onRemove: () {
                   context.read<CartBloc>().add(
-                        RemoveFromCart(cartItem.product.id),
-                      );
+                    RemoveFromCart(cartItem.product.id),
+                  );
                 },
                 onIncrement: () {
                   context.read<CartBloc>().add(
-                        UpdateQuantity(
-                          productId: cartItem.product.id,
-                          quantity: cartItem.quantity + 1,
-                        ),
-                      );
+                    UpdateQuantity(
+                      productId: cartItem.product.id,
+                      quantity: cartItem.quantity + 1,
+                    ),
+                  );
                 },
                 onDecrement: () {
                   if (cartItem.quantity == 1) {
                     // Remove product from cart when quantity is 1
                     context.read<CartBloc>().add(
-                          RemoveFromCart(cartItem.product.id),
-                        );
+                      RemoveFromCart(cartItem.product.id),
+                    );
                   } else {
                     // Decrease quantity
                     context.read<CartBloc>().add(
-                          UpdateQuantity(
-                            productId: cartItem.product.id,
-                            quantity: cartItem.quantity - 1,
-                          ),
-                        );
+                      UpdateQuantity(
+                        productId: cartItem.product.id,
+                        quantity: cartItem.quantity - 1,
+                      ),
+                    );
                   }
                 },
               );
@@ -165,12 +160,7 @@ class _CartScreenView extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             color: AppColors.background,
-            border: Border(
-              top: BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
-            ),
+            border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: SafeArea(
             child: Column(
@@ -198,14 +188,6 @@ class _CartScreenView extends StatelessWidget {
                         ),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.textOnPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
                     child: const Text(
                       'Оформить заказ',
                       style: TextStyle(

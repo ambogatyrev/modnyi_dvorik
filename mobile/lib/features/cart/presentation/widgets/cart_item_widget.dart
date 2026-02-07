@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../product/presentation/widgets/quantity_selector.dart';
 import '../../domain/entities/cart_item.dart';
 
 /// Widget to display a single cart item
@@ -119,39 +119,11 @@ class CartItemWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Quantity Controls
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.border, width: 1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Decrement button
-                          _QuantityButton(
-                            svgAsset: 'assets/icons/minus.svg',
-                            onPressed: onDecrement,
-                          ),
-
-                          // Quantity display
-                          Container(
-                            constraints: const BoxConstraints(minWidth: 40),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              cartItem.quantity.toString(),
-                              style: Theme.of(context).textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
-                          // Increment button
-                          _QuantityButton(
-                            svgAsset: 'assets/icons/plus.svg',
-                            onPressed: onIncrement,
-                          ),
-                        ],
-                      ),
+                    QuantitySelector(
+                      quantity: cartItem.quantity,
+                      onIncrement: onIncrement,
+                      onDecrement: onDecrement,
+                      minQuantity: 0,
                     ),
 
                     // Total Price for this item
@@ -168,40 +140,6 @@ class CartItemWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Internal widget for quantity control buttons
-class _QuantityButton extends StatelessWidget {
-  final String svgAsset;
-  final VoidCallback? onPressed;
-
-  const _QuantityButton({required this.svgAsset, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = onPressed != null
-        ? AppColors.primary
-        : AppColors.mutedForeground;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: 32,
-          height: 32,
-          alignment: Alignment.center,
-          child: SvgPicture.asset(
-            svgAsset,
-            width: 20,
-            height: 20,
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          ),
-        ),
       ),
     );
   }

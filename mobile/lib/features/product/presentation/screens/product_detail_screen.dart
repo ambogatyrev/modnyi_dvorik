@@ -299,11 +299,6 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                                         },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: color,
-                                    foregroundColor: AppColors.textOnPrimary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    elevation: 0,
                                   ),
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
