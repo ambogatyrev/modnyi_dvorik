@@ -117,18 +117,39 @@ class _BrandsTab extends StatelessWidget {
         itemCount: brands.length,
         itemBuilder: (context, index) {
           final brand = brands[index];
-          return _ItemCard(
-            icon: brand['logo']!,
-            name: brand['name']!,
-            onTap: () {
-              // TODO: Navigate to brand products screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Показать товары бренда ${brand['name']}'),
-                  duration: const Duration(seconds: 2),
+          return Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                // TODO: Navigate to brand products screen
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Показать товары бренда ${brand['name']}'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.muted,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.border, width: 1),
                 ),
-              );
-            },
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  brand['name']!,
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
           );
         },
       ),
