@@ -52,6 +52,11 @@ class CartLoaded extends CartState {
       items.isNotEmpty &&
       items.every((item) => selectedProductIds.contains(item.product.id));
 
+  /// Total quantity of selected items
+  int get selectedItemCount => items
+      .where((item) => selectedProductIds.contains(item.product.id))
+      .fold<int>(0, (sum, item) => sum + item.quantity);
+
   /// Number of selected items
   int get selectedCount => selectedProductIds.length;
 

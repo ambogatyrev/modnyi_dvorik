@@ -388,7 +388,7 @@ class _CartScreenView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${state.itemCount} ${_pluralTovar(state.itemCount)} • ${NumberFormat('#,###', 'ru_RU').format(state.totalPrice)} ₽',
+                      '${state.selectedItemCount} ${_pluralTovar(state.selectedItemCount)} • ${NumberFormat('#,###', 'ru_RU').format(state.subtotal)} ₽',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
