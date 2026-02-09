@@ -151,8 +151,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
               if (state.isLoading)
                 const SliverFillRemaining(
                   child: Center(
-                    child:
-                        CircularProgressIndicator(color: AppColors.primary),
+                    child: CircularProgressIndicator(color: AppColors.primary),
                   ),
                 )
               else if (state.error != null)
@@ -191,9 +190,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                         // Product Name
                         Text(
                           product.name,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineMedium
+                          style: Theme.of(context).textTheme.headlineMedium
                               ?.copyWith(
                                 color: AppColors.darkBlue,
                                 fontWeight: FontWeight.w700,
@@ -204,9 +201,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                         // Price
                         Text(
                           '${formatter.format(product.price)} ₽',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
+                          style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontSize: 24,
                                 color: AppColors.primary,
@@ -319,9 +314,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                                   child: AnimatedSwitcher(
                                     duration: const Duration(milliseconds: 200),
                                     child: Text(
-                                      isInCart
-                                          ? 'В корзине • ${formatter.format(product.price * currentQty)} ₽'
-                                          : 'В корзину • ${formatter.format(product.price)} ₽',
+                                      isInCart ? 'В корзине' : 'В корзину',
                                       key: ValueKey(isInCart),
                                       style: const TextStyle(
                                         fontSize: 16,
