@@ -2,12 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
 import '../bloc/cart_state.dart';
 import '../widgets/cart_item_widget.dart';
-import '../widgets/order_summary.dart';
 
 /// Cart Screen - displays shopping cart with items and checkout option
 /// Uses in-memory storage for MVP stage
@@ -127,9 +127,7 @@ class _CartScreenView extends StatelessWidget {
             GestureDetector(
               onTap: () => _confirmRemoveSelected(
                 context,
-                () => context
-                    .read<CartBloc>()
-                    .add(const RemoveSelectedItems()),
+                () => context.read<CartBloc>().add(const RemoveSelectedItems()),
               ),
               child: Row(
                 spacing: 4,
@@ -193,13 +191,11 @@ class _CartScreenView extends StatelessWidget {
     );
   }
 
-  void _confirmRemoveSelected(
-    BuildContext context,
-    VoidCallback onConfirm,
-  ) {
+  void _confirmRemoveSelected(BuildContext context, VoidCallback onConfirm) {
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     final title = 'Удалить товары';
-    final content = 'Вы уверены что хотите удалить выделенные товары из корзины?';
+    final content =
+        'Вы уверены что хотите удалить выделенные товары из корзины?';
 
     if (isIOS) {
       showCupertinoDialog(
@@ -239,10 +235,7 @@ class _CartScreenView extends StatelessWidget {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: Text(
-                'Удалить',
-                style: TextStyle(color: AppColors.error),
-              ),
+              child: Text('Удалить', style: TextStyle(color: AppColors.error)),
             ),
           ],
         ),
@@ -297,10 +290,7 @@ class _CartScreenView extends StatelessWidget {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: Text(
-                'Удалить',
-                style: TextStyle(color: AppColors.error),
-              ),
+              child: Text('Удалить', style: TextStyle(color: AppColors.error)),
             ),
           ],
         ),
@@ -368,37 +358,37 @@ class _CartScreenView extends StatelessWidget {
             border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                OrderSummary(
-                  subtotal: state.subtotal,
-                  discount: state.discount,
-                  total: state.totalPrice,
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Оформление заказа в разработке'),
-                          backgroundColor: AppColors.info,
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Оформить заказ',
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Оформление заказа в разработке'),
+                      backgroundColor: AppColors.info,
+                    ),
+                  );
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'К оформлению',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
+                    Text(
+                      '${state.itemCount} ${state.itemCount == 1 ? 'товар' : 'товара'} • ${NumberFormat('#,###', 'ru_RU').format(state.totalPrice)} ₽',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
