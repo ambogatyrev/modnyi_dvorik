@@ -162,10 +162,12 @@ class _OrderScreenState extends State<OrderScreen> {
                               : null,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'Удалить товары из корзины после оформления',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.textSecondary),
+                        Expanded(
+                          child: Text(
+                            'Удалить товары из корзины после оформления',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.textSecondary),
+                          ),
                         ),
                       ],
                     ),
