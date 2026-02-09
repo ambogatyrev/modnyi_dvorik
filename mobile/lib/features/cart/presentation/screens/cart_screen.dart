@@ -125,6 +125,12 @@ class _CartScreenView extends StatelessWidget {
         children: [
           if (state.selectedCount > 0)
             GestureDetector(
+              onTap: () => _confirmRemoveSelected(
+                context,
+                () => context
+                    .read<CartBloc>()
+                    .add(const RemoveSelectedItems()),
+              ),
               child: Row(
                 spacing: 4,
                 children: [
@@ -185,6 +191,63 @@ class _CartScreenView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _confirmRemoveSelected(
+    BuildContext context,
+    VoidCallback onConfirm,
+  ) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final title = 'Удалить товары';
+    final content = 'Вы уверены что хотите удалить выделенные товары из корзины?';
+
+    if (isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+              child: const Text('Удалить'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+              child: Text(
+                'Удалить',
+                style: TextStyle(color: AppColors.error),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _confirmRemove(
