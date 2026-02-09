@@ -31,13 +31,8 @@ class CartItemWidget extends StatelessWidget {
     final formatter = NumberFormat('#,###', 'ru_RU');
     final product = cartItem.product;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border, width: 1),
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Row(
@@ -112,16 +107,20 @@ class CartItemWidget extends StatelessWidget {
               GestureDetector(
                 onTap: onToggleSelection,
                 child: Container(
-                  width: 24,
-                  height: 24,
-                  margin: const EdgeInsets.only(right: 8, top: 4),
+                  width: 20,
+                  height: 20,
+                  margin: const EdgeInsets.only(top: 4),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.border,
+                      color: isSelected
+                          ? AppColors.secondary
+                          : AppColors.border,
                       width: isSelected ? 2 : 1.5,
                     ),
-                    color: isSelected ? AppColors.primary : Colors.transparent,
+                    color: isSelected
+                        ? AppColors.secondary
+                        : Colors.transparent,
                   ),
                   child: isSelected
                       ? const Icon(Icons.check, size: 16, color: Colors.white)

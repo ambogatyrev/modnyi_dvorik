@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
@@ -30,7 +31,7 @@ class _CartScreenView extends StatelessWidget {
         final cartLoaded = state is CartLoaded && !state.isEmpty ? state : null;
 
         return Scaffold(
-          backgroundColor: AppColors.muted,
+          backgroundColor: AppColors.background,
           appBar: AppBar(
             title: const Text('Ваша корзина'),
             centerTitle: false,
@@ -120,8 +121,26 @@ class _CartScreenView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          if (state.selectedCount > 0)
+            GestureDetector(
+              child: Row(
+                spacing: 4,
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/trach.svg',
+                    width: 18,
+                    height: 18,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.secondary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  Text('${state.selectedCount}'),
+                ],
+              ),
+            ),
+          Spacer(),
           GestureDetector(
             onTap: () {
               if (state.allSelected) {
@@ -132,49 +151,36 @@ class _CartScreenView extends StatelessWidget {
             },
             child: Row(
               children: [
+                Text(
+                  'Выбрать все',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.darkBlue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: state.allSelected
-                          ? AppColors.primary
+                          ? AppColors.secondary
                           : AppColors.border,
                       width: state.allSelected ? 2 : 1.5,
                     ),
                     color: state.allSelected
-                        ? AppColors.primary
+                        ? AppColors.secondary
                         : Colors.transparent,
                   ),
                   child: state.allSelected
                       ? const Icon(Icons.check, size: 16, color: Colors.white)
                       : null,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  state.allSelected ? 'Снять выделение' : 'Выбрать все',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ],
             ),
           ),
-          if (state.selectedCount > 0)
-            GestureDetector(
-              onTap: () {
-                context.read<CartBloc>().add(const RemoveSelectedItems());
-              },
-              child: Text(
-                'Удалить отмеченные',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.error,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -184,9 +190,10 @@ class _CartScreenView extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+          child: ListView.separated(
             itemCount: state.items.length,
+            separatorBuilder: (context, index) =>
+                Divider(color: AppColors.borderLight),
             itemBuilder: (context, index) {
               final cartItem = state.items[index];
               return CartItemWidget(
