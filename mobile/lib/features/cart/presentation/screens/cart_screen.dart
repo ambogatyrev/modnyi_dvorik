@@ -298,6 +298,14 @@ class _CartScreenView extends StatelessWidget {
     }
   }
 
+  String _pluralTovar(int n) {
+    final mod10 = n % 10;
+    final mod100 = n % 100;
+    if (mod10 == 1 && mod100 != 11) return 'товар';
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'товара';
+    return 'товаров';
+  }
+
   Widget _buildCartContent(BuildContext context, CartLoaded state) {
     return Column(
       children: [
@@ -380,7 +388,7 @@ class _CartScreenView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${state.itemCount} ${state.itemCount == 1 ? 'товар' : 'товара'} • ${NumberFormat('#,###', 'ru_RU').format(state.totalPrice)} ₽',
+                      '${state.itemCount} ${_pluralTovar(state.itemCount)} • ${NumberFormat('#,###', 'ru_RU').format(state.totalPrice)} ₽',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
