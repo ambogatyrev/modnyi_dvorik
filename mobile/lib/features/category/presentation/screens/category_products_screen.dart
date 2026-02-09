@@ -7,6 +7,8 @@ import '../../../home/presentation/widgets/search_app_bar_title.dart';
 import '../bloc/category_bloc.dart';
 import '../bloc/category_event.dart';
 import '../bloc/category_state.dart';
+import '../../../favorites/presentation/cubit/favorites_cubit.dart';
+import '../../../favorites/presentation/cubit/favorites_state.dart';
 
 /// Category Products screen - displays products filtered by category
 class CategoryProductsScreen extends StatelessWidget {
@@ -122,35 +124,47 @@ class _CategoryProductsScreenView extends StatelessWidget {
                     ),
                   )
                 else
-                  SliverPadding(
-                    padding: const EdgeInsets.all(16),
-                    sliver: SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.75,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                          ),
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final product = state.products[index];
-                        return ProductCard(
-                          product: product,
-                          onAddToCart: () {
-                            // Show snackbar when adding to cart
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${product.name} добавлен в корзину',
-                                ),
-                                duration: const Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, favState) {
+                      final favoriteIds = favState is FavoritesLoaded
+                          ? favState.favoriteIds
+                          : <String>{};
+                      return SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 0.75,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
                               ),
+                          delegate: SliverChildBuilderDelegate((context, index) {
+                            final product = state.products[index];
+                            return ProductCard(
+                              product: product,
+                              isFavorite: favoriteIds.contains(product.id),
+                              onFavoriteToggle: () {
+                                context
+                                    .read<FavoritesCubit>()
+                                    .toggleFavorite(product);
+                              },
+                              onAddToCart: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      '${product.name} добавлен в корзину',
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
                             );
-                          },
-                        );
-                      }, childCount: state.products.length),
-                    ),
+                          }, childCount: state.products.length),
+                        ),
+                      );
+                    },
                   ),
               ],
             );

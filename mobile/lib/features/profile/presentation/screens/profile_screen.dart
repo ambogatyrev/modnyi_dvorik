@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/repositories/user_repository_impl.dart';
 import '../../domain/usecases/get_user_profile.dart';
@@ -133,12 +135,7 @@ class _ProfileScreenView extends StatelessWidget {
                           icon: Icons.favorite_outline,
                           label: 'Избранное',
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Раздел "Избранное" в разработке'),
-                                backgroundColor: AppColors.info,
-                              ),
-                            );
+                            context.push(AppRoutes.favorites);
                           },
                         ),
                         ProfileMenuItem(

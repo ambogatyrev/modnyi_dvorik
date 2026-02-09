@@ -10,6 +10,9 @@ import '../../../home/domain/usecases/get_product_by_id.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
+import '../../../../core/widgets/favorite_button.dart';
+import '../../../favorites/presentation/cubit/favorites_cubit.dart';
+import '../../../favorites/presentation/cubit/favorites_state.dart';
 import '../cubit/product_detail_cubit.dart';
 import '../cubit/product_detail_state.dart';
 import '../widgets/feature_list.dart';
@@ -112,7 +115,22 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
                 actionsPadding: EdgeInsets.symmetric(horizontal: 16),
                 actions: [
                   // Add to Favorite Button
-                  const Icon(Icons.favorite_outline, color: AppColors.primary),
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, favState) {
+                      final isFav =
+                          favState is FavoritesLoaded &&
+                          product != null &&
+                          favState.isFavorite(product.id);
+                      return FavoriteButton(
+                        isFavorite: isFav,
+                        onToggle: product != null
+                            ? () => context
+                                  .read<FavoritesCubit>()
+                                  .toggleFavorite(product)
+                            : null,
+                      );
+                    },
+                  ),
                 ],
               ),
 

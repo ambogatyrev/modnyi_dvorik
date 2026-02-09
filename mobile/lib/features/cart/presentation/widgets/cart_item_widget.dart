@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/favorite_button.dart';
 import '../../../product/presentation/widgets/quantity_selector.dart';
 import '../../domain/entities/cart_item.dart';
 
@@ -13,19 +14,23 @@ import '../../domain/entities/cart_item.dart';
 class CartItemWidget extends StatelessWidget {
   final CartItem cartItem;
   final bool isSelected;
+  final bool isFavorite;
   final VoidCallback onToggleSelection;
   final VoidCallback onRemove;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
+  final VoidCallback? onFavoriteToggle;
 
   const CartItemWidget({
     super.key,
     required this.cartItem,
     required this.isSelected,
+    this.isFavorite = false,
     required this.onToggleSelection,
     required this.onRemove,
     required this.onIncrement,
     required this.onDecrement,
+    this.onFavoriteToggle,
   });
 
   @override
@@ -37,10 +42,7 @@ class CartItemWidget extends StatelessWidget {
 
     void navigateToProduct() => context.push(
       AppRoutes.productRoute(product.id),
-      extra: {
-        'imageUrl': product.image,
-        'heroTag': heroTag,
-      },
+      extra: {'imageUrl': product.image, 'heroTag': heroTag},
     );
 
     return Padding(
@@ -115,10 +117,11 @@ class CartItemWidget extends StatelessWidget {
                       // Price per unit
                       Text(
                         '${formatter.format(product.price)} ₽',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.secondary,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.secondary,
+                            ),
                       ),
                     ],
                   ),
@@ -164,14 +167,10 @@ class CartItemWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     color: AppColors.surface,
                   ),
-                  child: SvgPicture.asset(
-                    'assets/icons/favorite.svg',
-                    width: 18,
-                    height: 18,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.primary,
-                      BlendMode.srcIn,
-                    ),
+                  child: FavoriteButton(
+                    isFavorite: isFavorite,
+                    onToggle: onFavoriteToggle,
+                    size: 18,
                   ),
                 ),
                 GestureDetector(

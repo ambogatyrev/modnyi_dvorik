@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/favorite_button.dart';
 import '../../domain/entities/product.dart';
 
 /// Product card widget - displays product information
@@ -12,8 +12,16 @@ import '../../domain/entities/product.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onAddToCart;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteToggle;
 
-  const ProductCard({super.key, required this.product, this.onAddToCart});
+  const ProductCard({
+    super.key,
+    required this.product,
+    this.onAddToCart,
+    this.isFavorite = false,
+    this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +101,10 @@ class ProductCard extends StatelessWidget {
                       ),
 
                       // Add to Favorite Button
-                      SvgPicture.asset(
-                        'assets/icons/favorite.svg',
-                        width: 18,
-                        height: 18,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.primary,
-                          BlendMode.srcIn,
-                        ),
+                      FavoriteButton(
+                        isFavorite: isFavorite,
+                        onToggle: onFavoriteToggle,
+                        size: 22,
                       ),
                     ],
                   ),

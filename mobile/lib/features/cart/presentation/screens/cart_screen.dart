@@ -9,6 +9,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
 import '../bloc/cart_state.dart';
+import '../../../favorites/presentation/cubit/favorites_cubit.dart';
+import '../../../favorites/presentation/cubit/favorites_state.dart';
 import '../widgets/cart_item_widget.dart';
 
 /// Cart Screen - displays shopping cart with items and checkout option
@@ -312,50 +314,63 @@ class _CartScreenView extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView.separated(
-            itemCount: state.items.length,
-            separatorBuilder: (context, index) =>
-                Divider(color: AppColors.borderLight),
-            itemBuilder: (context, index) {
-              final cartItem = state.items[index];
-              return CartItemWidget(
-                cartItem: cartItem,
-                isSelected: state.selectedProductIds.contains(
-                  cartItem.product.id,
-                ),
-                onToggleSelection: () {
-                  context.read<CartBloc>().add(
-                    ToggleItemSelection(cartItem.product.id),
-                  );
-                },
-                onRemove: () => _confirmRemove(
-                  context,
-                  cartItem.product.name,
-                  () => context.read<CartBloc>().add(
-                    RemoveFromCart(cartItem.product.id),
-                  ),
-                ),
-                onIncrement: () {
-                  context.read<CartBloc>().add(
-                    UpdateQuantity(
-                      productId: cartItem.product.id,
-                      quantity: cartItem.quantity + 1,
+          child: BlocBuilder<FavoritesCubit, FavoritesState>(
+            builder: (context, favState) {
+              final favoriteIds = favState is FavoritesLoaded
+                  ? favState.favoriteIds
+                  : <String>{};
+              return ListView.separated(
+                itemCount: state.items.length,
+                separatorBuilder: (context, index) =>
+                    Divider(color: AppColors.borderLight),
+                itemBuilder: (context, index) {
+                  final cartItem = state.items[index];
+                  return CartItemWidget(
+                    cartItem: cartItem,
+                    isSelected: state.selectedProductIds.contains(
+                      cartItem.product.id,
                     ),
-                  );
-                },
-                onDecrement: () {
-                  if (cartItem.quantity == 1) {
-                    context.read<CartBloc>().add(
-                      RemoveFromCart(cartItem.product.id),
-                    );
-                  } else {
-                    context.read<CartBloc>().add(
-                      UpdateQuantity(
-                        productId: cartItem.product.id,
-                        quantity: cartItem.quantity - 1,
+                    isFavorite: favoriteIds.contains(cartItem.product.id),
+                    onFavoriteToggle: () {
+                      context
+                          .read<FavoritesCubit>()
+                          .toggleFavorite(cartItem.product);
+                    },
+                    onToggleSelection: () {
+                      context.read<CartBloc>().add(
+                        ToggleItemSelection(cartItem.product.id),
+                      );
+                    },
+                    onRemove: () => _confirmRemove(
+                      context,
+                      cartItem.product.name,
+                      () => context.read<CartBloc>().add(
+                        RemoveFromCart(cartItem.product.id),
                       ),
-                    );
-                  }
+                    ),
+                    onIncrement: () {
+                      context.read<CartBloc>().add(
+                        UpdateQuantity(
+                          productId: cartItem.product.id,
+                          quantity: cartItem.quantity + 1,
+                        ),
+                      );
+                    },
+                    onDecrement: () {
+                      if (cartItem.quantity == 1) {
+                        context.read<CartBloc>().add(
+                          RemoveFromCart(cartItem.product.id),
+                        );
+                      } else {
+                        context.read<CartBloc>().add(
+                          UpdateQuantity(
+                            productId: cartItem.product.id,
+                            quantity: cartItem.quantity - 1,
+                          ),
+                        );
+                      }
+                    },
+                  );
                 },
               );
             },

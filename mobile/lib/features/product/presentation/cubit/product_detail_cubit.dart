@@ -42,10 +42,4 @@ class ProductDetailCubit extends Cubit<ProductDetailState> {
     }
   }
 
-  /// Toggle favorite status
-  void toggleFavorite() {
-    if (state.product != null) {
-      emit(state.copyWith(isFavorite: !state.isFavorite));
-    }
-  }
 }

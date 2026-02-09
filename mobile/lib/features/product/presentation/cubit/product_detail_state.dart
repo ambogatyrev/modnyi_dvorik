@@ -5,14 +5,12 @@ import '../../../home/domain/entities/product.dart';
 class ProductDetailState extends Equatable {
   final Product? product;
   final int quantity;
-  final bool isFavorite;
   final bool isLoading;
   final String? error;
 
   const ProductDetailState({
     this.product,
     this.quantity = 1,
-    this.isFavorite = false,
     this.isLoading = false,
     this.error,
   });
@@ -32,7 +30,6 @@ class ProductDetailState extends Equatable {
     return ProductDetailState(
       product: product,
       quantity: 1,
-      isFavorite: false,
       isLoading: false,
     );
   }
@@ -46,19 +43,17 @@ class ProductDetailState extends Equatable {
   ProductDetailState copyWith({
     Product? product,
     int? quantity,
-    bool? isFavorite,
     bool? isLoading,
     String? error,
   }) {
     return ProductDetailState(
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,
-      isFavorite: isFavorite ?? this.isFavorite,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
   }
 
   @override
-  List<Object?> get props => [product, quantity, isFavorite, isLoading, error];
+  List<Object?> get props => [product, quantity, isLoading, error];
 }
