@@ -25,85 +25,156 @@ class _CartScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.muted,
-      appBar: AppBar(title: const Text('Ваша корзина'), centerTitle: false),
-      body: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state is CartLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        final cartLoaded = state is CartLoaded && !state.isEmpty ? state : null;
 
-          if (state is CartError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    state.message,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<CartBloc>().add(const LoadCart());
-                    },
-                    child: const Text('Повторить'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (state is CartLoaded) {
-            if (state.isEmpty) {
-              return _buildEmptyState(context);
-            }
-
-            return _buildCartContent(context, state);
-          }
-
-          return const SizedBox.shrink();
-        },
-      ),
+        return Scaffold(
+          backgroundColor: AppColors.muted,
+          appBar: AppBar(
+            title: const Text('Ваша корзина'),
+            centerTitle: false,
+            bottom: cartLoaded != null
+                ? PreferredSize(
+                    preferredSize: const Size.fromHeight(40),
+                    child: _buildSelectionToolbar(context, cartLoaded),
+                  )
+                : null,
+          ),
+          body: _buildBody(context, state),
+        );
+      },
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 120,
-            color: AppColors.mutedForeground,
+  Widget _buildBody(BuildContext context, CartState state) {
+    if (state is CartLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
+    }
+
+    if (state is CartError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              state.message,
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                context.read<CartBloc>().add(const LoadCart());
+              },
+              child: const Text('Повторить'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state is CartLoaded) {
+      if (state.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.shopping_cart_outlined,
+                size: 120,
+                color: AppColors.mutedForeground,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Корзина пуста',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.darkBlue,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Добавьте товары в корзину,\nчтобы оформить заказ',
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Корзина пуста',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: AppColors.darkBlue,
+        );
+      }
+
+      return _buildCartContent(context, state);
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildSelectionToolbar(BuildContext context, CartLoaded state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (state.allSelected) {
+                context.read<CartBloc>().add(const DeselectAllItems());
+              } else {
+                context.read<CartBloc>().add(const SelectAllItems());
+              }
+            },
+            child: Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: state.allSelected
+                          ? AppColors.primary
+                          : AppColors.border,
+                      width: state.allSelected ? 2 : 1.5,
+                    ),
+                    color: state.allSelected
+                        ? AppColors.primary
+                        : Colors.transparent,
+                  ),
+                  child: state.allSelected
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      : null,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  state.allSelected ? 'Снять выделение' : 'Выбрать все',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Добавьте товары в корзину,\nчтобы оформить заказ',
-            textAlign: TextAlign.center,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
-          ),
+          if (state.selectedCount > 0)
+            GestureDetector(
+              onTap: () {
+                context.read<CartBloc>().add(const RemoveSelectedItems());
+              },
+              child: Text(
+                'Удалить отмеченные',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -112,7 +183,6 @@ class _CartScreenView extends StatelessWidget {
   Widget _buildCartContent(BuildContext context, CartLoaded state) {
     return Column(
       children: [
-        // Cart Items List
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -121,6 +191,14 @@ class _CartScreenView extends StatelessWidget {
               final cartItem = state.items[index];
               return CartItemWidget(
                 cartItem: cartItem,
+                isSelected: state.selectedProductIds.contains(
+                  cartItem.product.id,
+                ),
+                onToggleSelection: () {
+                  context.read<CartBloc>().add(
+                    ToggleItemSelection(cartItem.product.id),
+                  );
+                },
                 onRemove: () {
                   context.read<CartBloc>().add(
                     RemoveFromCart(cartItem.product.id),
@@ -136,12 +214,10 @@ class _CartScreenView extends StatelessWidget {
                 },
                 onDecrement: () {
                   if (cartItem.quantity == 1) {
-                    // Remove product from cart when quantity is 1
                     context.read<CartBloc>().add(
                       RemoveFromCart(cartItem.product.id),
                     );
                   } else {
-                    // Decrease quantity
                     context.read<CartBloc>().add(
                       UpdateQuantity(
                         productId: cartItem.product.id,
@@ -154,8 +230,6 @@ class _CartScreenView extends StatelessWidget {
             },
           ),
         ),
-
-        // Bottom section with Order Summary and Checkout Button
         Container(
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
@@ -166,21 +240,17 @@ class _CartScreenView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Order Summary
                 OrderSummary(
                   subtotal: state.subtotal,
                   discount: state.discount,
                   total: state.totalPrice,
                 ),
                 const SizedBox(height: 16),
-
-                // Checkout Button
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement checkout functionality
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Оформление заказа в разработке'),

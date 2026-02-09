@@ -26,6 +26,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<RemoveFromCart>(_onRemoveFromCart);
     on<UpdateQuantity>(_onUpdateQuantity);
     on<ClearCart>(_onClearCart);
+    on<ToggleItemSelection>(_onToggleItemSelection);
+    on<SelectAllItems>(_onSelectAllItems);
+    on<DeselectAllItems>(_onDeselectAllItems);
+    on<RemoveSelectedItems>(_onRemoveSelectedItems);
   }
 
   /// Handle LoadCart event
@@ -37,11 +41,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(const CartLoading());
 
       final items = await getCartItems();
-      final totalPrice = _calculateTotalPrice(items);
+      final selectedIds = items.map((item) => item.product.id).toSet();
+      final totalPrice = _calculateTotalPrice(items, selectedIds);
 
       emit(CartLoaded(
         items: items,
         totalPrice: totalPrice,
+        selectedProductIds: selectedIds,
       ));
     } catch (e) {
       emit(CartError('Не удалось загрузить корзину: ${e.toString()}'));
@@ -58,11 +64,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
       // Reload cart after adding
       final items = await getCartItems();
-      final totalPrice = _calculateTotalPrice(items);
+      final currentSelected = state is CartLoaded
+          ? (state as CartLoaded).selectedProductIds
+          : <String>{};
+      final selectedIds = {...currentSelected, event.product.id};
+      final totalPrice = _calculateTotalPrice(items, selectedIds);
 
       emit(CartLoaded(
         items: items,
         totalPrice: totalPrice,
+        selectedProductIds: selectedIds,
       ));
     } catch (e) {
       emit(CartError('Не удалось добавить товар в корзину: ${e.toString()}'));
@@ -79,11 +90,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
       // Reload cart after removing
       final items = await getCartItems();
-      final totalPrice = _calculateTotalPrice(items);
+      final currentSelected = state is CartLoaded
+          ? (state as CartLoaded).selectedProductIds
+          : <String>{};
+      final selectedIds = {...currentSelected}..remove(event.productId);
+      final totalPrice = _calculateTotalPrice(items, selectedIds);
 
       emit(CartLoaded(
         items: items,
         totalPrice: totalPrice,
+        selectedProductIds: selectedIds,
       ));
     } catch (e) {
       emit(CartError('Не удалось удалить товар из корзины: ${e.toString()}'));
@@ -105,11 +121,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
       // Reload cart after updating
       final items = await getCartItems();
-      final totalPrice = _calculateTotalPrice(items);
+      final currentSelected = state is CartLoaded
+          ? (state as CartLoaded).selectedProductIds
+          : <String>{};
+      final selectedIds = event.quantity <= 0
+          ? ({...currentSelected}..remove(event.productId))
+          : {...currentSelected};
+      final totalPrice = _calculateTotalPrice(items, selectedIds);
 
       emit(CartLoaded(
         items: items,
         totalPrice: totalPrice,
+        selectedProductIds: selectedIds,
       ));
     } catch (e) {
       emit(CartError(
@@ -138,11 +161,89 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  /// Calculate total price from cart items
-  double _calculateTotalPrice(List items) {
-    return items.fold<double>(
-      0.0,
-      (sum, item) => sum + item.totalPrice,
-    );
+  /// Handle ToggleItemSelection event
+  void _onToggleItemSelection(
+    ToggleItemSelection event,
+    Emitter<CartState> emit,
+  ) {
+    if (state is! CartLoaded) return;
+    final currentState = state as CartLoaded;
+
+    final selectedIds = {...currentState.selectedProductIds};
+    if (selectedIds.contains(event.productId)) {
+      selectedIds.remove(event.productId);
+    } else {
+      selectedIds.add(event.productId);
+    }
+
+    final totalPrice = _calculateTotalPrice(currentState.items, selectedIds);
+    emit(currentState.copyWith(
+      selectedProductIds: selectedIds,
+      totalPrice: totalPrice,
+    ));
+  }
+
+  /// Handle SelectAllItems event
+  void _onSelectAllItems(
+    SelectAllItems event,
+    Emitter<CartState> emit,
+  ) {
+    if (state is! CartLoaded) return;
+    final currentState = state as CartLoaded;
+
+    final selectedIds = currentState.items.map((item) => item.product.id).toSet();
+    final totalPrice = _calculateTotalPrice(currentState.items, selectedIds);
+    emit(currentState.copyWith(
+      selectedProductIds: selectedIds,
+      totalPrice: totalPrice,
+    ));
+  }
+
+  /// Handle DeselectAllItems event
+  void _onDeselectAllItems(
+    DeselectAllItems event,
+    Emitter<CartState> emit,
+  ) {
+    if (state is! CartLoaded) return;
+    final currentState = state as CartLoaded;
+
+    emit(currentState.copyWith(
+      selectedProductIds: <String>{},
+      totalPrice: 0.0,
+    ));
+  }
+
+  /// Handle RemoveSelectedItems event
+  Future<void> _onRemoveSelectedItems(
+    RemoveSelectedItems event,
+    Emitter<CartState> emit,
+  ) async {
+    if (state is! CartLoaded) return;
+    final currentState = state as CartLoaded;
+
+    try {
+      for (final productId in currentState.selectedProductIds) {
+        await removeFromCart(productId);
+      }
+
+      final items = await getCartItems();
+      final selectedIds = <String>{};
+      final totalPrice = _calculateTotalPrice(items, selectedIds);
+
+      emit(CartLoaded(
+        items: items,
+        totalPrice: totalPrice,
+        selectedProductIds: selectedIds,
+      ));
+    } catch (e) {
+      emit(CartError('Не удалось удалить выбранные товары: ${e.toString()}'));
+    }
+  }
+
+  /// Calculate total price from selected cart items only
+  double _calculateTotalPrice(List items, Set<String> selectedProductIds) {
+    return items
+        .where((item) => selectedProductIds.contains(item.product.id))
+        .fold<double>(0.0, (sum, item) => sum + item.totalPrice);
   }
 }

@@ -56,3 +56,28 @@ class UpdateQuantity extends CartEvent {
 class ClearCart extends CartEvent {
   const ClearCart();
 }
+
+/// Event to toggle selection of a single cart item
+class ToggleItemSelection extends CartEvent {
+  final String productId;
+
+  const ToggleItemSelection(this.productId);
+
+  @override
+  List<Object?> get props => [productId];
+}
+
+/// Event to select all items in cart
+class SelectAllItems extends CartEvent {
+  const SelectAllItems();
+}
+
+/// Event to deselect all items in cart
+class DeselectAllItems extends CartEvent {
+  const DeselectAllItems();
+}
+
+/// Event to remove all currently selected items from cart
+class RemoveSelectedItems extends CartEvent {
+  const RemoveSelectedItems();
+}

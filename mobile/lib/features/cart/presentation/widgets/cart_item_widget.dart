@@ -10,6 +10,8 @@ import '../../domain/entities/cart_item.dart';
 /// Shows product image, name, price, quantity controls, and remove button
 class CartItemWidget extends StatelessWidget {
   final CartItem cartItem;
+  final bool isSelected;
+  final VoidCallback onToggleSelection;
   final VoidCallback onRemove;
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
@@ -17,6 +19,8 @@ class CartItemWidget extends StatelessWidget {
   const CartItemWidget({
     super.key,
     required this.cartItem,
+    required this.isSelected,
+    required this.onToggleSelection,
     required this.onRemove,
     required this.onIncrement,
     required this.onDecrement,
@@ -28,7 +32,6 @@ class CartItemWidget extends StatelessWidget {
     final product = cartItem.product;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -105,6 +108,26 @@ class CartItemWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              // Selection Checkbox
+              GestureDetector(
+                onTap: onToggleSelection,
+                child: Container(
+                  width: 24,
+                  height: 24,
+                  margin: const EdgeInsets.only(right: 8, top: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                      width: isSelected ? 2 : 1.5,
+                    ),
+                    color: isSelected ? AppColors.primary : Colors.transparent,
+                  ),
+                  child: isSelected
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      : null,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -131,19 +154,22 @@ class CartItemWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    color: AppColors.surface,
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/icons/trach.svg',
-                    width: 18,
-                    height: 18,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.primary,
-                      BlendMode.srcIn,
+                GestureDetector(
+                  onTap: onRemove,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.surface,
+                    ),
+                    child: SvgPicture.asset(
+                      'assets/icons/trach.svg',
+                      width: 18,
+                      height: 18,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.primary,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),

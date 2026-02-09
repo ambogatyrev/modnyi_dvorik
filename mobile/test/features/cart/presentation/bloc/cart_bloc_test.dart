@@ -27,6 +27,16 @@ void main() {
   late MockRemoveFromCart mockRemoveFromCart;
   late MockUpdateCartQuantity mockUpdateCartQuantity;
 
+  setUpAll(() {
+    registerFallbackValue(const Product(
+      id: '',
+      name: '',
+      price: 0,
+      image: '',
+      category: '',
+    ));
+  });
+
   setUp(() {
     mockGetCartItems = MockGetCartItems();
     mockAddToCart = MockAddToCart();
@@ -82,7 +92,8 @@ void main() {
           const CartLoading(),
           const CartLoaded(
             items: tCartItems,
-            totalPrice: 400.0, // (100 * 2) + (200 * 1)
+            totalPrice: 400.0,
+            selectedProductIds: {'1', '2'},
           ),
         ],
         verify: (_) {
@@ -129,7 +140,11 @@ void main() {
         },
         act: (bloc) => bloc.add(const AddToCart(product: tProduct1, quantity: 1)),
         expect: () => [
-          const CartLoaded(items: tCartItems, totalPrice: 400.0),
+          const CartLoaded(
+            items: tCartItems,
+            totalPrice: 200.0, // Only product '1' is selected: 100 * 2
+            selectedProductIds: {'1'},
+          ),
         ],
         verify: (_) {
           verify(() => mockAddToCart(tProduct1, 1)).called(1);
@@ -162,7 +177,7 @@ void main() {
         },
         act: (bloc) => bloc.add(const RemoveFromCart('1')),
         expect: () => [
-          const CartLoaded(items: [tCartItem2], totalPrice: 200.0),
+          const CartLoaded(items: [tCartItem2], totalPrice: 0.0),
         ],
         verify: (_) {
           verify(() => mockRemoveFromCart('1')).called(1);
@@ -204,7 +219,7 @@ void main() {
               CartItem(product: tProduct1, quantity: 3),
               tCartItem2,
             ],
-            totalPrice: 500.0, // (100 * 3) + (200 * 1)
+            totalPrice: 0.0,
           ),
         ],
         verify: (_) {
@@ -223,7 +238,7 @@ void main() {
         },
         act: (bloc) => bloc.add(const UpdateQuantity(productId: '1', quantity: 0)),
         expect: () => [
-          const CartLoaded(items: [tCartItem2], totalPrice: 200.0),
+          const CartLoaded(items: [tCartItem2], totalPrice: 0.0),
         ],
         verify: (_) {
           verify(() => mockRemoveFromCart('1')).called(1);
@@ -265,14 +280,110 @@ void main() {
       );
     });
 
+    group('Selection', () {
+      blocTest<CartBloc, CartState>(
+        'ToggleItemSelection deselects a selected item',
+        build: () {
+          when(() => mockGetCartItems()).thenAnswer((_) async => tCartItems);
+          return cartBloc;
+        },
+        seed: () => const CartLoaded(
+          items: tCartItems,
+          totalPrice: 400.0,
+          selectedProductIds: {'1', '2'},
+        ),
+        act: (bloc) => bloc.add(const ToggleItemSelection('1')),
+        expect: () => [
+          const CartLoaded(
+            items: tCartItems,
+            totalPrice: 200.0,
+            selectedProductIds: {'2'},
+          ),
+        ],
+      );
+
+      blocTest<CartBloc, CartState>(
+        'SelectAllItems selects all items',
+        build: () => cartBloc,
+        seed: () => const CartLoaded(
+          items: tCartItems,
+          totalPrice: 0.0,
+          selectedProductIds: {},
+        ),
+        act: (bloc) => bloc.add(const SelectAllItems()),
+        expect: () => [
+          const CartLoaded(
+            items: tCartItems,
+            totalPrice: 400.0,
+            selectedProductIds: {'1', '2'},
+          ),
+        ],
+      );
+
+      blocTest<CartBloc, CartState>(
+        'DeselectAllItems deselects all items',
+        build: () => cartBloc,
+        seed: () => const CartLoaded(
+          items: tCartItems,
+          totalPrice: 400.0,
+          selectedProductIds: {'1', '2'},
+        ),
+        act: (bloc) => bloc.add(const DeselectAllItems()),
+        expect: () => [
+          const CartLoaded(
+            items: tCartItems,
+            totalPrice: 0.0,
+            selectedProductIds: {},
+          ),
+        ],
+      );
+
+      blocTest<CartBloc, CartState>(
+        'RemoveSelectedItems removes selected items from cart',
+        build: () {
+          when(() => mockRemoveFromCart(any()))
+              .thenAnswer((_) async => {});
+          when(() => mockGetCartItems()).thenAnswer((_) async => [tCartItem2]);
+          return cartBloc;
+        },
+        seed: () => const CartLoaded(
+          items: tCartItems,
+          totalPrice: 200.0,
+          selectedProductIds: {'1'},
+        ),
+        act: (bloc) => bloc.add(const RemoveSelectedItems()),
+        expect: () => [
+          const CartLoaded(
+            items: [tCartItem2],
+            totalPrice: 0.0,
+            selectedProductIds: {},
+          ),
+        ],
+        verify: (_) {
+          verify(() => mockRemoveFromCart('1')).called(1);
+        },
+      );
+    });
+
     group('Total Calculations', () {
-      test('CartLoaded calculates correct subtotal', () {
+      test('CartLoaded calculates correct subtotal for selected items', () {
         const state = CartLoaded(
           items: tCartItems,
           totalPrice: 400.0,
+          selectedProductIds: {'1', '2'},
         );
 
         expect(state.subtotal, equals(400.0));
+      });
+
+      test('CartLoaded subtotal only includes selected items', () {
+        const state = CartLoaded(
+          items: tCartItems,
+          totalPrice: 200.0,
+          selectedProductIds: {'1'},
+        );
+
+        expect(state.subtotal, equals(200.0));
       });
 
       test('CartLoaded calculates correct item count', () {
@@ -300,6 +411,26 @@ void main() {
         );
 
         expect(state.isEmpty, equals(true));
+      });
+
+      test('allSelected returns true when all items are selected', () {
+        const state = CartLoaded(
+          items: tCartItems,
+          totalPrice: 400.0,
+          selectedProductIds: {'1', '2'},
+        );
+
+        expect(state.allSelected, isTrue);
+      });
+
+      test('allSelected returns false when not all items are selected', () {
+        const state = CartLoaded(
+          items: tCartItems,
+          totalPrice: 200.0,
+          selectedProductIds: {'1'},
+        );
+
+        expect(state.allSelected, isFalse);
       });
     });
   });
