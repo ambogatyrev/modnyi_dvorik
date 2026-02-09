@@ -77,11 +77,14 @@ class AppRouter {
         name: 'product',
         pageBuilder: (context, state) {
           final productId = state.pathParameters['id'] ?? '';
-          final imageUrl = state.extra as String?;
+          final extra = state.extra is Map ? state.extra as Map : null;
+          final imageUrl = extra?['imageUrl'] as String?;
+          final heroTag = extra?['heroTag'] as String?;
           return MaterialPage(
             child: ProductDetailScreen(
               productId: productId,
               imageUrl: imageUrl,
+              heroTag: heroTag,
             ),
           );
         },

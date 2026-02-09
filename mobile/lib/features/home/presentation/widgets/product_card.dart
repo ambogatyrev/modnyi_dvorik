@@ -29,7 +29,10 @@ class ProductCard extends StatelessWidget {
         onTap: () {
           context.push(
             AppRoutes.productRoute(product.id),
-            extra: product.image,
+            extra: {
+              'imageUrl': product.image,
+              'heroTag': 'product-${product.id}',
+            },
           );
         },
         child: Column(

@@ -20,11 +20,13 @@ import '../widgets/specification_list.dart';
 class ProductDetailScreen extends StatelessWidget {
   final String productId;
   final String? imageUrl;
+  final String? heroTag;
 
   const ProductDetailScreen({
     super.key,
     required this.productId,
     this.imageUrl,
+    this.heroTag,
   });
 
   @override
@@ -39,7 +41,11 @@ class ProductDetailScreen extends StatelessWidget {
         return ProductDetailCubit(getProductById: getProductById)
           ..loadProduct(productId);
       },
-      child: _ProductDetailView(productId: productId, imageUrl: imageUrl),
+      child: _ProductDetailView(
+        productId: productId,
+        imageUrl: imageUrl,
+        heroTag: heroTag ?? 'product-$productId',
+      ),
     );
   }
 }
@@ -47,8 +53,13 @@ class ProductDetailScreen extends StatelessWidget {
 class _ProductDetailView extends StatefulWidget {
   final String productId;
   final String? imageUrl;
+  final String heroTag;
 
-  const _ProductDetailView({required this.productId, this.imageUrl});
+  const _ProductDetailView({
+    required this.productId,
+    this.imageUrl,
+    required this.heroTag,
+  });
 
   @override
   State<_ProductDetailView> createState() => _ProductDetailViewState();
@@ -89,7 +100,6 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
         builder: (context, state) {
           final product = state.product;
           final imageUrl = product?.image ?? widget.imageUrl;
-          final productId = product?.id ?? widget.productId;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -110,7 +120,7 @@ class _ProductDetailViewState extends State<_ProductDetailView> {
               if (imageUrl != null)
                 SliverToBoxAdapter(
                   child: Hero(
-                    tag: 'product-$productId',
+                    tag: widget.heroTag,
                     child: AspectRatio(
                       aspectRatio: 1.0,
                       child: CachedNetworkImage(
