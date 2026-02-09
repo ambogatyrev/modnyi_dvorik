@@ -270,6 +270,7 @@ class _OrderScreenState extends State<OrderScreen> {
   void _placeOrder() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         title: const Text('Заказ оформлен'),
         content: const Text(
