@@ -26,6 +26,7 @@ class QuantitySelector extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // Decrement button
           _QuantityButton(
@@ -36,7 +37,6 @@ class QuantitySelector extends StatelessWidget {
           // Quantity display
           Container(
             constraints: const BoxConstraints(minWidth: 48),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               quantity.toString(),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -66,10 +66,6 @@ class _QuantityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = onPressed != null
-        ? AppColors.primary
-        : AppColors.mutedForeground;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -83,7 +79,7 @@ class _QuantityButton extends StatelessWidget {
             svgAsset,
             width: 25,
             height: 25,
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(AppColors.primary, BlendMode.srcIn),
           ),
         ),
       ),

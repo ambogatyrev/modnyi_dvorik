@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/app_router.dart';
@@ -89,12 +90,13 @@ class ProductCard extends StatelessWidget {
                       ),
 
                       // Add to Favorite Button
-                      InkWell(
-                        onTap: onAddToCart,
-                        child: const Icon(
-                          Icons.favorite_outline,
-                          color: AppColors.primary,
-                          size: 20,
+                      SvgPicture.asset(
+                        'assets/icons/favorite.svg',
+                        width: 18,
+                        height: 18,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.primary,
+                          BlendMode.srcIn,
                         ),
                       ),
                     ],
