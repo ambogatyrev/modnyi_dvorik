@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -186,6 +187,64 @@ class _CartScreenView extends StatelessWidget {
     );
   }
 
+  void _confirmRemove(
+    BuildContext context,
+    String productName,
+    VoidCallback onConfirm,
+  ) {
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final title = 'Удалить товар';
+    final content = 'Вы уверены что хотите удалить $productName из корзины?';
+
+    if (isIOS) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+              child: const Text('Удалить'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Отмена'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+              child: Text(
+                'Удалить',
+                style: TextStyle(color: AppColors.error),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Widget _buildCartContent(BuildContext context, CartLoaded state) {
     return Column(
       children: [
@@ -206,11 +265,13 @@ class _CartScreenView extends StatelessWidget {
                     ToggleItemSelection(cartItem.product.id),
                   );
                 },
-                onRemove: () {
-                  context.read<CartBloc>().add(
+                onRemove: () => _confirmRemove(
+                  context,
+                  cartItem.product.name,
+                  () => context.read<CartBloc>().add(
                     RemoveFromCart(cartItem.product.id),
-                  );
-                },
+                  ),
+                ),
                 onIncrement: () {
                   context.read<CartBloc>().add(
                     UpdateQuantity(
