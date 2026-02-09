@@ -38,7 +38,7 @@ class _CategoryScreenState extends State<CategoryScreen>
         title: SearchAppBarTitle(),
         titleSpacing: 16,
         bottom: TabBar(
-          dividerColor: const Color.fromARGB(255, 218, 216, 216),
+          dividerColor: AppColors.borderLight,
           controller: _tabController,
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.secondary,

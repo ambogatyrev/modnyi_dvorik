@@ -20,6 +20,7 @@ class AppColors {
   static const Color muted = Color(0xFFF5F5F5);
   static const Color mutedForeground = Color(0xFF717182);
   static const Color border = Color(0xFFE5E5E5);
+  static const Color borderLight = Color(0xFFDAD8D8);
   static const Color surface = Color(0xFFFBF9FA);
 
   // Text colors

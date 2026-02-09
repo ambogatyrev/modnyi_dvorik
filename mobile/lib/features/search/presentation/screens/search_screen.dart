@@ -18,13 +18,31 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends State<SearchScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   late final SearchBloc _searchBloc;
+  late final AnimationController _slideController;
+  late final Animation<Offset> _slideAnimation;
+  late final Animation<double> _fadeAnimation;
+  bool _hasPlayedInitialAnimation = false;
 
   @override
   void initState() {
     super.initState();
+
+    _slideController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
+    _fadeAnimation = CurvedAnimation(
+      parent: _slideController,
+      curve: Curves.easeOut,
+    );
 
     // Initialize repository and use cases
     final repository = SearchRepositoryImpl();
@@ -45,6 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     _searchBloc.close();
+    _slideController.dispose();
     super.dispose();
   }
 
@@ -99,11 +118,22 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: SearchResultsGrid(products: state.popularProducts)),
-      ],
+    if (!_hasPlayedInitialAnimation) {
+      _hasPlayedInitialAnimation = true;
+      _slideController.forward(from: 0);
+    }
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: SlideTransition(
+        position: _slideAnimation,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: SearchResultsGrid(products: state.popularProducts)),
+          ],
+        ),
+      ),
     );
   }
 
