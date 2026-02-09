@@ -369,14 +369,16 @@ class _CartScreenView extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Оформление заказа в разработке'),
-                      backgroundColor: AppColors.info,
-                    ),
-                  );
-                },
+                onPressed: state.selectedCount > 0
+                    ? () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Оформление заказа в разработке'),
+                            backgroundColor: AppColors.info,
+                          ),
+                        );
+                      }
+                    : null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
