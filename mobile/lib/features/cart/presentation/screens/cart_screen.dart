@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
@@ -370,14 +372,7 @@ class _CartScreenView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: state.selectedCount > 0
-                    ? () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Оформление заказа в разработке'),
-                            backgroundColor: AppColors.info,
-                          ),
-                        );
-                      }
+                    ? () => context.push(AppRoutes.order)
                     : null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -7,6 +7,7 @@ import '../../features/category/presentation/screens/category_products_screen.da
 import '../../features/product/presentation/screens/product_detail_screen.dart';
 import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/order/presentation/screens/order_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 
 /// Route names constants
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String cart = '/cart';
   static const String profile = '/profile';
   static const String search = '/search';
+  static const String order = '/order';
 
   // Helper methods to build routes with parameters
   static String categoryRoute(String id) => '/category/$id';
@@ -88,6 +90,13 @@ class AppRouter {
             ),
           );
         },
+      ),
+      // Order/checkout route without bottom navigation
+      GoRoute(
+        path: AppRoutes.order,
+        name: 'order',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: OrderScreen()),
       ),
       // Search route without bottom navigation
       GoRoute(
