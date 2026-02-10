@@ -27,34 +27,11 @@ class ProfileMenuItem extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
-            ),
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
               // Icon
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.muted,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  icon,
-                  size: 22,
-                  color: iconColor ?? AppColors.primary,
-                ),
-              ),
+              Icon(icon, size: 26, color: iconColor ?? AppColors.darkBlue),
               const SizedBox(width: 16),
 
               // Label
@@ -62,19 +39,16 @@ class ProfileMenuItem extends StatelessWidget {
                 child: Text(
                   label,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.darkBlue,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: iconColor ?? AppColors.darkBlue,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
 
               // Trailing arrow
               if (showTrailing)
-                Icon(
-                  Icons.chevron_right,
-                  size: 24,
-                  color: AppColors.mutedForeground,
-                ),
+                Icon(Icons.chevron_right, size: 24, color: AppColors.secondary),
             ],
           ),
         ),

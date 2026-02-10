@@ -77,77 +77,87 @@ class _ProfileScreenView extends StatelessWidget {
             if (state is ProfileLoaded) {
               final user = state.user;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Loyalty Card
-                    LoyaltyCard(
-                      userName: user.name,
-                      userAddress: user.address,
-                      bonusPoints: user.bonusPoints,
-                    ),
-                    const SizedBox(height: 24),
+              return CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        // Loyalty Card
+                        LoyaltyCard(
+                          userName: user.name,
+                          userAddress: user.address,
+                          bonusPoints: user.bonusPoints,
+                        ),
+                        const SizedBox(height: 24),
 
-                    // Menu Items Section
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          ProfileMenuItem(
-                            icon: Icons.shopping_bag_outlined,
-                            label: 'Мои заказы',
-                            onTap: () {
-                              context.push(AppRoutes.orders);
-                            },
+                        // Menu Items Section
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          ProfileMenuItem(
-                            icon: Icons.favorite_outline,
-                            label: 'Избранное',
-                            onTap: () {
-                              context.push(AppRoutes.favorites);
-                            },
+                          child: Column(
+                            children: [
+                              ProfileMenuItem(
+                                icon: Icons.shopping_bag_outlined,
+                                label: 'Мои заказы',
+                                onTap: () {
+                                  context.push(AppRoutes.orders);
+                                },
+                              ),
+                              ProfileMenuItem(
+                                icon: Icons.favorite_outline,
+                                label: 'Избранное',
+                                onTap: () {
+                                  context.push(AppRoutes.favorites);
+                                },
+                              ),
+                              ProfileMenuItem(
+                                icon: Icons.settings_outlined,
+                                label: 'Настройки',
+                                onTap: () {
+                                  context.push(AppRoutes.settings);
+                                },
+                              ),
+                              ProfileMenuItem(
+                                icon: Icons.logout,
+                                label: 'Выйти из аккаунта',
+                                iconColor: AppColors.error,
+                                onTap: () {
+                                  _showLogoutDialog(context);
+                                },
+                              ),
+                            ],
                           ),
-                          ProfileMenuItem(
-                            icon: Icons.settings_outlined,
-                            label: 'Настройки',
-                            onTap: () {
-                              context.push(AppRoutes.settings);
-                            },
-                          ),
-                          ProfileMenuItem(
-                            icon: Icons.logout,
-                            label: 'Выйти из аккаунта',
-                            iconColor: AppColors.error,
-                            onTap: () {
-                              _showLogoutDialog(context);
-                            },
-                          ),
-                        ],
+                        ),
+                      ]),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 32),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FutureBuilder<PackageInfo>(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, snapshot) {
+                            final version = snapshot.data?.version ?? '';
+                            return Text(
+                              'МОДНЫЙ ДВОРИК V$version',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: AppColors.mutedForeground,
+                                    fontSize: 14,
+                                  ),
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 32),
-                    FutureBuilder<PackageInfo>(
-                      future: PackageInfo.fromPlatform(),
-                      builder: (context, snapshot) {
-                        final version = snapshot.data?.version ?? '';
-                        return Center(
-                          child: Text(
-                            'Модный дворик $version',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.mutedForeground,
-                                ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  ),
+                ],
               );
             }
 
