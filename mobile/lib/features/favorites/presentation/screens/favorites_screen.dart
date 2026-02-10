@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../home/presentation/widgets/product_card.dart';
@@ -58,7 +59,7 @@ class FavoritesScreen extends StatelessWidget {
           if (state is FavoritesLoaded) {
             if (state.products.isEmpty) {
               return EmptyStateWidget.favorites(
-                onAction: () => Navigator.of(context).pop(),
+                onAction: () => context.go('/'),
               );
             }
 

@@ -9,6 +9,7 @@ import '../../features/cart/presentation/screens/cart_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/favorites/presentation/screens/favorites_screen.dart';
 import '../../features/order/presentation/screens/order_screen.dart';
+import '../../features/orders/presentation/screens/my_orders_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 
 /// Route names constants
@@ -22,6 +23,7 @@ class AppRoutes {
   static const String search = '/search';
   static const String order = '/order';
   static const String favorites = '/favorites';
+  static const String orders = '/orders';
 
   // Helper methods to build routes with parameters
   static String categoryRoute(String id) => '/category/$id';
@@ -106,6 +108,13 @@ class AppRouter {
         name: 'favorites',
         pageBuilder: (context, state) =>
             const MaterialPage(child: FavoritesScreen()),
+      ),
+      // My orders route without bottom navigation
+      GoRoute(
+        path: AppRoutes.orders,
+        name: 'orders',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: MyOrdersScreen()),
       ),
       // Search route without bottom navigation
       GoRoute(

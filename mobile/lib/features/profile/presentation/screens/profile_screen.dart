@@ -101,14 +101,7 @@ class _ProfileScreenView extends StatelessWidget {
                             icon: Icons.shopping_bag_outlined,
                             label: 'Мои заказы',
                             onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Раздел "Мои заказы" в разработке',
-                                  ),
-                                  backgroundColor: AppColors.info,
-                                ),
-                              );
+                              context.push(AppRoutes.orders);
                             },
                           ),
                           ProfileMenuItem(
