@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/empty_state_widget.dart';
 import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
 import '../bloc/cart_state.dart';
@@ -86,33 +87,8 @@ class _CartScreenView extends StatelessWidget {
 
     if (state is CartLoaded) {
       if (state.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.shopping_cart_outlined,
-                size: 120,
-                color: AppColors.mutedForeground,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Корзина пуста',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.darkBlue,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Добавьте товары в корзину,\nчтобы оформить заказ',
-                textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
-              ),
-            ],
-          ),
+        return EmptyStateWidget.cart(
+          onAction: () => context.go('/'),
         );
       }
 
