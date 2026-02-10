@@ -5,13 +5,14 @@ import '../models/user_model.dart';
 
 /// User repository implementation using mock data
 class UserRepositoryImpl implements UserRepository {
+  final MockUserStorage _userStorage = MockUserStorage();
+
   @override
   Future<User> getUserProfile() async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 300));
 
-    // Get mock user and convert to entity
-    return _mapToEntity(mockUser);
+    return _mapToEntity(_userStorage.getCurrentUser());
   }
 
   @override
@@ -19,12 +20,8 @@ class UserRepositoryImpl implements UserRepository {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 300));
 
-    // Get user from mock data (only mockUser with id '1' exists)
-    if (id == mockUser.id) {
-      return _mapToEntity(mockUser);
-    }
-
-    return null;
+    final model = _userStorage.getUserById(id);
+    return model != null ? _mapToEntity(model) : null;
   }
 
   @override
@@ -32,8 +29,14 @@ class UserRepositoryImpl implements UserRepository {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // In a real app, this would update the user in the backend
-    // For now, we just simulate the operation
+    _userStorage.updateUser(UserModel(
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      address: user.address,
+      bonusPoints: user.bonusPoints,
+      password: user.password,
+    ));
   }
 
   /// Map UserModel to User entity
@@ -41,9 +44,10 @@ class UserRepositoryImpl implements UserRepository {
     return User(
       id: model.id,
       name: model.name,
-      email: model.email,
+      phone: model.phone,
       address: model.address,
       bonusPoints: model.bonusPoints,
+      password: model.password,
     );
   }
 }

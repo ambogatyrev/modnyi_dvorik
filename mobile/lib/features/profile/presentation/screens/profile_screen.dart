@@ -129,14 +129,7 @@ class _ProfileScreenView extends StatelessWidget {
                             icon: Icons.settings_outlined,
                             label: 'Настройки',
                             onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Раздел "Настройки" в разработке',
-                                  ),
-                                  backgroundColor: AppColors.info,
-                                ),
-                              );
+                              context.push(AppRoutes.settings);
                             },
                           ),
                           ProfileMenuItem(
