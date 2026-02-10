@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/repositories/user_repository_impl.dart';
@@ -105,20 +106,6 @@ class _ProfileScreenView extends StatelessWidget {
                             },
                           ),
                           ProfileMenuItem(
-                            icon: Icons.location_on_outlined,
-                            label: 'Адреса доставки',
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Раздел "Адреса доставки" в разработке',
-                                  ),
-                                  backgroundColor: AppColors.info,
-                                ),
-                              );
-                            },
-                          ),
-                          ProfileMenuItem(
                             icon: Icons.favorite_outline,
                             label: 'Избранное',
                             onTap: () {
@@ -134,7 +121,7 @@ class _ProfileScreenView extends StatelessWidget {
                           ),
                           ProfileMenuItem(
                             icon: Icons.logout,
-                            label: 'Выйти',
+                            label: 'Выйти из аккаунта',
                             iconColor: AppColors.error,
                             onTap: () {
                               _showLogoutDialog(context);
@@ -144,6 +131,21 @@ class _ProfileScreenView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 32),
+                    FutureBuilder<PackageInfo>(
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, snapshot) {
+                        final version = snapshot.data?.version ?? '';
+                        return Center(
+                          child: Text(
+                            'Модный дворик $version',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppColors.mutedForeground,
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               );
