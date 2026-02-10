@@ -6,20 +6,22 @@ class User extends Equatable {
   final String id;
   final String name;
   final String email;
+  final String address;
   final int bonusPoints;
 
   const User({
     required this.id,
     required this.name,
     required this.email,
+    required this.address,
     required this.bonusPoints,
   });
 
   @override
-  List<Object?> get props => [id, name, email, bonusPoints];
+  List<Object?> get props => [id, name, email, address, bonusPoints];
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, bonusPoints: $bonusPoints)';
+    return 'User(id: $id, name: $name, email: $email, address: $address, bonusPoints: $bonusPoints)';
   }
 }

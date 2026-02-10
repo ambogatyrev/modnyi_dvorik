@@ -42,6 +42,7 @@ class UserRepositoryImpl implements UserRepository {
       id: model.id,
       name: model.name,
       email: model.email,
+      address: model.address,
       bonusPoints: model.bonusPoints,
     );
   }

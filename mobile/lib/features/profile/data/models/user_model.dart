@@ -5,12 +5,14 @@ class UserModel extends Equatable {
   final String id;
   final String name;
   final String email;
+  final String address;
   final int bonusPoints;
 
   const UserModel({
     required this.id,
     required this.name,
     required this.email,
+    required this.address,
     required this.bonusPoints,
   });
 
@@ -20,6 +22,7 @@ class UserModel extends Equatable {
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
+      address: json['address'] as String,
       bonusPoints: json['bonusPoints'] as int,
     );
   }
@@ -30,6 +33,7 @@ class UserModel extends Equatable {
       'id': id,
       'name': name,
       'email': email,
+      'address': address,
       'bonusPoints': bonusPoints,
     };
   }
@@ -39,21 +43,23 @@ class UserModel extends Equatable {
     String? id,
     String? name,
     String? email,
+    String? address,
     int? bonusPoints,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      address: address ?? this.address,
       bonusPoints: bonusPoints ?? this.bonusPoints,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, email, bonusPoints];
+  List<Object?> get props => [id, name, email, address, bonusPoints];
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, bonusPoints: $bonusPoints)';
+    return 'UserModel(id: $id, name: $name, email: $email, address: $address, bonusPoints: $bonusPoints)';
   }
 }

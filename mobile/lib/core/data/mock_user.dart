@@ -6,6 +6,7 @@ const UserModel mockUser = UserModel(
   id: '1',
   name: 'Анна Петрова',
   email: 'anna.petrova@mail.ru',
+  address: 'Москва, ул. Пушкина, д. 10, кв. 5',
   bonusPoints: 1250,
 );
 
