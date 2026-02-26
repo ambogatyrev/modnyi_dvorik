@@ -60,6 +60,27 @@ class ModnyiDvorikApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         debugShowCheckedModeBanner: false,
         routerConfig: AppRouter.router,
+        builder: (context, child) {
+          return ColoredBox(
+            color: const Color(0xFF1A1A2E),
+            child: Center(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 430),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 24,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.hardEdge,
+                child: child,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
